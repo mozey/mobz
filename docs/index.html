@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>mobz</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="bootstrap-3.3.7-dist/css/ie10-viewport-bug-workaround.css"
+          rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="bootstrap-3.3.7-dist/css/sticky-footer-navbar.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script
+        src="html5shiv-3.7.3.min.js"></script>
+    <script src="respond-1.4.2.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+`
+<!-- Fixed navbar -->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" onclick="show('search')">mobz</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="menu routes"><a href="#routes" onclick="show('routes')">Routes</a></li>
+                <li class="menu friends"><a href="#friends" onclick="show('friends')">Friends</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+
+<!-- Begin page content -->
+<div class="container page search">
+    <div class="page-header">
+        <h1>Where to?</h1>
+    </div>
+    <input type="search" class="form-control" placeholder="Search">
+    <br>
+    <button type="button" class="btn btn-primary btn-lg btn-block" onclick="show('routes')">List Routes</button>
+</div>
+
+<div class="container page routes hidden">
+    <h3>Route 1</h3>
+    <ol>
+        <li>Cycle to A</li>
+        <li>Bus to B</li>
+        <li>Train to Destination</li>
+    </ol>
+    <button type="submit" class="btn">Join</button>
+    &nbsp;&nbsp;&nbsp;
+    <a href="javascript:"><span class="badge">3</span>&nbsp;Joined</a>
+
+    <h3>Route 2</h3>
+    <ol>
+        <li>Walk to C</li>
+        <li>Taxi to B</li>
+        <li>Train to Destination</li>
+    </ol>
+    <button type="submit" class="btn btn-primary">
+        <i class="glyphicon glyphicon-ok icon-white"></i> Selected
+    </button>
+    &nbsp;&nbsp;&nbsp;
+    <a href="javascript:"><span class="badge">2</span>&nbsp;Joined</a>
+
+    <h3>Route 3</h3>
+    <ol>
+        <li>Walk to B</li>
+        <li>Train to Destination</li>
+    </ol>
+    <button type="submit" class="btn">Join</button>
+    &nbsp;&nbsp;&nbsp;
+    <a href="javascript:"><span class="badge">1</span>&nbsp;Joined</a>
+
+    <br>
+    <br>
+    <button type="button" class="btn btn-primary btn-lg btn-block" onclick="show('friends')">Let's Go!</button>
+</div>
+
+<div class="container page friends hidden">
+    <h3>Riding bus to B</h3>
+    <span>
+        <span class="glyphicon glyphicon-user"></span>
+        chris
+    </span>
+    <span>
+        <span class="glyphicon glyphicon-user"></span>
+        john
+    </span>
+    <span>
+        <span class="glyphicon glyphicon-user"></span>
+        joe
+    </span>
+    <br>
+    <br>
+
+    <h3>Walking to C</h3>
+    <span>
+        <span class="glyphicon glyphicon-user"></span>
+        senka
+    </span>
+    <span>
+        <span class="glyphicon glyphicon-user"></span>
+        jane
+    </span>
+    <br>
+    <br>
+
+    <h3>Waiting for train to Destination</h3>
+    <span>
+        <span class="glyphicon glyphicon-user"></span>
+        nick
+    </span>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <p class="text-muted text-center">Yay social commuting!</p>
+    </div>
+</footer>
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script
+    src="jquery-1.12.4.min.js"></script>
+<script>window.jQuery || document.write('<script src="bootstrap-3.3.7-dist/js/vendor/jquery.min.js"><\/script>')</script>
+<script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="bootstrap-3.3.7-dist/js/ie10-viewport-bug-workaround.js"></script>
+
+<script>
+    function show(page) {
+        $("div.page").addClass("hidden");
+        $("div."+page).removeClass("hidden");
+        $("li.menu").removeClass("active");
+        $("li."+page).addClass("active");
+    }
+</script>
+</body>
+</html>

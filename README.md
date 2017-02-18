@@ -1,4 +1,4 @@
-# Mobz
+# mobz
 
 Social commuting
 

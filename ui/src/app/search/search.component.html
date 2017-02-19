@@ -5,9 +5,8 @@
 
   <form [formGroup]="searchForm" (submit)="listRoutes($event)">
     <input class="form-control" formControlName="destination" type="search"
+           [typeahead]="states"
            placeholder="Search">
-    <br>
-    <input (change)="destinationChanged()" type="checkbox" formControlName="selected"><br><br>
     <button class="btn btn-primary btn-lg btn-block" type="submit">List Routes
     </button>
   </form>

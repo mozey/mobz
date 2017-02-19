@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {AppRoutingModule} from './app-routing.module';
 import { AgmCoreModule } from 'angular2-google-maps/core';
+import {TypeaheadModule} from "ng2-bootstrap/typeahead"
 
 import {AppComponent} from './app.component';
 import { RouteComponent } from './route/route.component';
@@ -28,7 +29,8 @@ import { ConfigService } from './config.service';
     AppRoutingModule,
     AgmCoreModule.forRoot({
       apiKey: window["config"].google.api_key
-    })
+    }),
+    TypeaheadModule.forRoot()
   ],
   providers: [ConfigService],
   bootstrap: [AppComponent]

@@ -2,8 +2,13 @@
   <div class="page-header">
     <h1>Where to?</h1>
   </div>
-  <input type="search" class="form-control" placeholder="Search">
-  <br>
-  <a href="/route" type="button" class="btn btn-primary btn-lg btn-block">
-    List Routes</a>
+
+  <form [formGroup]="searchForm" (submit)="listRoutes($event)">
+    <input class="form-control" formControlName="destination" type="search"
+           placeholder="Search">
+    <br>
+    <input (change)="destinationChanged()" type="checkbox" formControlName="selected"><br><br>
+    <button class="btn btn-primary btn-lg btn-block" type="submit">List Routes
+    </button>
+  </form>
 </div>

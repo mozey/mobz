@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-track',
@@ -7,9 +7,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TrackComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
   }
 
+  lat: number = -33.924158;
+  lng: number = 18.454311;
 }

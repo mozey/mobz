@@ -7,7 +7,6 @@ export class ConfigService {
 
   get config(): any {
     let config = Object.assign(window["config"]);
-    console.info("config", config);
     return config;
   }
 

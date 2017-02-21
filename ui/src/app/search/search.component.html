@@ -4,14 +4,8 @@
   </div>
 
   <form [formGroup]="searchForm" (submit)="listRoutes($event)">
-    <input class="form-control" formControlName="destination" type="search"
-           [typeahead]="dataSource"
-           (typeaheadLoading)="changeTypeaheadLoading($event)"
-           (typeaheadNoResults)="changeTypeaheadNoResults($event)"
-           (typeaheadOnSelect)="typeaheadOnSelect($event)"
-           typeaheadOptionsLimit="7"
-           typeaheadOptionField="name"
-           placeholder="Search">
+    <input type="text" class="form-control" formControlName="destination"
+           [ngbTypeahead]="search"/>
     <br>
     <button class="btn btn-primary btn-lg btn-block" type="submit">List Routes
     </button>

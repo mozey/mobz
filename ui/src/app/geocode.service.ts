@@ -12,7 +12,8 @@ export class GeocodeService {
   }
 
   search(term: string) {
-    if (term === '') {
+    // Only search if term is at least two characters
+    if (term.length < 2) {
       return Observable.of([]);
     }
 

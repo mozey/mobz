@@ -49,20 +49,28 @@ export class SearchComponent implements OnInit {
     console.info(this.searchForm.value);
   }
 
+  searchResultFormatter(value: any) {
+    return value["name"];
+  }
+
+  searchInputFormatter(value: any) {
+    return value["name"];
+  }
+
   searching = false;
   searchFailed = false;
   search = (text$: Observable<string>) =>
     text$
-      .debounceTime(300)
+      .debounceTime(800)
       .distinctUntilChanged()
       .do(() => this.searching = true)
       .switchMap(term =>
         this._geocode.search(term)
-            .do(() => this.searchFailed = false)
-            .catch(() => {
-              this.searchFailed = true;
-              return Observable.of([]);
-            }))
+          .do(() => this.searchFailed = false)
+          .catch(() => {
+            this.searchFailed = true;
+            return Observable.of([]);
+          }))
       .do(() => this.searching = false);
 
 }

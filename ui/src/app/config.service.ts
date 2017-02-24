@@ -1,14 +1,15 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
 @Injectable()
 export class ConfigService {
 
-  constructor() { }
+    constructor() {
+    }
 
-  get config(): any {
-    let config = Object.assign(window["config"]);
-    return config;
-  }
+    get config(): any {
+        let config = Object.assign(window["config"]);
+        return config;
+    }
 
 }
 

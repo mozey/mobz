@@ -1,18 +1,19 @@
 <div class="page container">
-  <br>
-  <br>
-  <br>
-  <div class="page-header">
-    <h1>Where to?</h1>
-  </div>
-
-  <form [formGroup]="searchForm" (submit)="listRoutes($event)">
-    <input type="text" class="form-control" formControlName="destination"
-           [ngbTypeahead]="search"
-           [resultFormatter]="searchResultFormatter"
-           [inputFormatter]="searchInputFormatter"/>
     <br>
-    <button class="btn btn-primary btn-lg btn-block" type="submit">List Routes
-    </button>
-  </form>
+    <br>
+    <br>
+    <div class="page-header">
+        <h1>Where to?</h1>
+    </div>
+
+    <form [formGroup]="searchForm" (submit)="listRoutes($event)">
+        <input type="text" class="form-control" formControlName="destination"
+               [ngbTypeahead]="search"
+               [resultFormatter]="searchResultFormatter"
+               [inputFormatter]="searchInputFormatter"/>
+        <br>
+        <button class="btn btn-primary btn-lg btn-block" type="submit">List
+            Routes
+        </button>
+    </form>
 </div>

@@ -1,14 +1,18 @@
 import {Injectable} from '@angular/core';
 
+import {ConfigService} from './config.service';
+
 import 'rxjs/add/observable/of';
 import {Observable} from "rxjs";
-import {Http} from '@angular/http';
+import {Http, URLSearchParams} from '@angular/http';
 // import {URLSearchParams} from "@angular/http";
 
 @Injectable()
 export class GeocodeService {
-  constructor(private http: Http) {
+  constructor(private http: Http,
+              private config: ConfigService) {
     this.http = http;
+    this.config = config.config;
   }
 
   search(term: string) {
@@ -16,13 +20,18 @@ export class GeocodeService {
     if (term.length < 2) {
       return Observable.of([]);
     }
+    console.info("Geocoding ", term);
 
-    let query = new RegExp(term, 'ig');
-    console.info("term", term);
-    return this.http.get("assets/states.json").map((response) => {
-      return response.json().filter((state: any) => {
-        return query.test(state.name);
-      })
+    let base = "https://maps.googleapis.com/maps/api/geocode/json";
+    let params: URLSearchParams = new URLSearchParams();
+    params.set("region", "za")
+    params.set("address", term)
+    params.set("key", this.config["google"]["api_key"])
+
+    return this.http.get(base, {search: params}).map((response) => {
+      let results = response.json().results;
+      console.info("Geocoding matches = ", results.length);
+      return results;
     });
   }
 

@@ -1,37 +1,10 @@
 <div class="page container">
-    <h3>Riding bus to B</h3>
-    <span>
-        <span class="glyphicon glyphicon-user"></span>
-        chris
-    </span>
-    <span>
-        <span class="glyphicon glyphicon-user"></span>
-        john
-    </span>
-    <span>
-        <span class="glyphicon glyphicon-user"></span>
-        joe
-    </span>
-    <br>
-    <br>
-
-    <h3>Walking to C</h3>
-    <span>
-        <span class="glyphicon glyphicon-user"></span>
-        senka
-    </span>
-    <span>
-        <span class="glyphicon glyphicon-user"></span>
-        jane
-    </span>
-    <br>
-    <br>
-
-    <h3>Waiting for train to Destination</h3>
-    <span>
-        <span class="glyphicon glyphicon-user"></span>
-        nick
-    </span>
-
-    <sebm-google-map [latitude]="lat" [longitude]="lng"></sebm-google-map>
+    <sebm-google-map [latitude]="lat" [longitude]="lng" [zoom]="13">
+        <sebm-google-map-polyline *ngFor="let coords of polyLines">
+            <sebm-google-map-polyline-point
+                *ngFor="let coord of coords"
+                [latitude]="coord[1]" [longitude]="coord[0]">
+            </sebm-google-map-polyline-point>
+        </sebm-google-map-polyline>
+    </sebm-google-map>
 </div>

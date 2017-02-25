@@ -14,6 +14,7 @@ import {SearchComponent} from './search/search.component';
 
 import {ConfigService} from './config.service';
 import {GeocodeService} from './geocode.service';
+import {GeolocationService} from './geolocation.service';
 import {WimtService} from './wimt.service';
 
 @NgModule({
@@ -38,6 +39,7 @@ import {WimtService} from './wimt.service';
     providers: [
         ConfigService,
         GeocodeService,
+        GeolocationService,
         WimtService
     ],
     bootstrap: [AppComponent]

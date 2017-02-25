@@ -8,7 +8,9 @@
     <strong>itinerary.id</strong> {{itinerary.id}}<br>
     <div class="row" *ngFor="let leg of itinerary.legs">
         <div class="col-md-12">
-            <strong>type</strong> {{leg.type}}<br>
+            <strong>type</strong>
+            &nbsp;<span *ngIf="leg.line">{{leg.line.agency.name}}</span>
+            &nbsp;({{leg.type}})<br>
             <div *ngIf="leg.type == 'Walking'">
                 <div class="row"
                      *ngFor="let direction of leg.directions">
@@ -19,8 +21,11 @@
             </div>
             <div *ngIf="leg.type == 'Transit'">
                 <div class="row" *ngFor="let waypoint of leg.waypoints">
-                    <div class="col-md-9 offset-md-3">
+                    <div *ngIf="waypoint.stop" class="col-md-9 offset-md-3">
                         {{waypoint.stop.name}}<br>
+                    </div>
+                    <div *ngIf="waypoint.line" class="col-md-9 offset-md-3">
+                        {{waypoint.line.name}}<br>
                     </div>
                 </div>
             </div>

@@ -3,6 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 import {WimtService} from '../wimt.service'
 import {Router} from '@angular/router';
+import {GeolocationService} from "../geolocation.service";
 
 @Component({
     selector: 'app-route',
@@ -16,32 +17,41 @@ export class RouteComponent implements OnInit {
     public journey = {itineraries: []};
     public polyLines = [];
     public itinerary;
+    public position;
 
     constructor(private route: ActivatedRoute,
                 private wimt: WimtService,
                 private modalService: NgbModal,
-                private router: Router) {
+                private router: Router,
+                    private geolocation: GeolocationService) {
     }
 
     ngOnInit() {
         this.zoom = 11;
 
-        this.route.queryParams.subscribe(queryParams => {
-            this.lat = Number(queryParams["lat"])
-            this.lng = Number(queryParams["lng"])
-        })
-        // (<any>window).mobz = this.route.queryParams;
+        this.geolocation.getCurrentPosition().subscribe(position => {
+            this.position = position;
 
-        this.wimt.journeyMultipoint([
-            // TODO Insert current location here
-            [18.3799843, -33.9510746],
-            [this.lng, this.lat]
-        ]).subscribe(
-            response => {
-                console.info("Journey multipoint results ", response);
-                this.journey = response;
-            }
-        )
+            this.route.queryParams.subscribe(queryParams => {
+                this.lat = Number(queryParams["lat"])
+                this.lng = Number(queryParams["lng"])
+            })
+            // (<any>window).mobz = this.route.queryParams;
+
+            this.wimt.journeyMultipoint([
+                // TODO Insert current location here
+                [
+                    Number(this.position.coords.longitude),
+                    Number(this.position.coords.latitude)
+                ],
+                [this.lng, this.lat]
+            ]).subscribe(
+                response => {
+                    console.info("Journey multipoint results ", response);
+                    this.journey = response;
+                }
+            )
+        })
     }
 
     showRouteDetails(itinerary, routeDetailsTemplate) {
@@ -72,8 +82,13 @@ export class RouteComponent implements OnInit {
                         coords.concat(leg.geometry.coordinates)
                     } else if (leg.type == "Transit") {
                         for (let waypoint of leg.waypoints) {
-                            coords.push(
-                                waypoint.stop.geometry.coordinates)
+                            if (waypoint.geometry) {
+                                coords.push(
+                                    waypoint.geometry.coordinates)
+                            } else if (waypoint.stop) {
+                                coords.push(
+                                    waypoint.stop.geometry.coordinates)
+                            }
                         }
                     }
                 }

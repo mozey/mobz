@@ -1,14 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, Validators, FormControl} from '@angular/forms';
 import {Router} from '@angular/router';
-
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/switchMap';
-
 import {GeocodeService} from "../geocode.service";
 
 function validDestination(c: FormControl) {
@@ -26,15 +24,15 @@ function validDestination(c: FormControl) {
     styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit {
-    constructor(private _fb: FormBuilder,
-                private _geocode: GeocodeService,
-                private _router: Router) {
+    constructor(private fb: FormBuilder,
+                private geocode: GeocodeService,
+                private router: Router) {
     }
 
     ngOnInit() {
     }
 
-    public searchForm = this._fb.group({
+    public searchForm = this.fb.group({
         destination: ["", [Validators.required, validDestination]],
     });
 
@@ -55,7 +53,7 @@ export class SearchComponent implements OnInit {
             .do(() => {
                 this.searching = true
             }).switchMap(term =>
-            this._geocode.search(term)
+            this.geocode.search(term)
                 .do(() => this.searchFailed = false)
                 .catch(() => {
                     this.searchFailed = true;
@@ -72,7 +70,7 @@ export class SearchComponent implements OnInit {
                 "lat": destination["geometry"]["location"]["lat"],
                 "lng": destination["geometry"]["location"]["lng"]
             }
-            this._router.navigate(["/route"], {queryParams: queryParams})
+            this.router.navigate(["/route"], {queryParams: queryParams})
         }
     }
 }

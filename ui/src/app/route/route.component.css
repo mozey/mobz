@@ -1,0 +1,8 @@
+.mobz-route-details {
+    width: calc(80vh);
+}
+
+.sebm-google-map-container {
+    height: calc(100vh - 200px);
+    width: 100%;
+}

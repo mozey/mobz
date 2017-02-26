@@ -16,6 +16,7 @@ import {ConfigService} from './config.service';
 import {GeocodeService} from './geocode.service';
 import {GeolocationService} from './geolocation.service';
 import {WimtService} from './wimt.service';
+import {WebsocketService} from './websocket.service';
 
 @NgModule({
     declarations: [
@@ -40,7 +41,8 @@ import {WimtService} from './wimt.service';
         ConfigService,
         GeocodeService,
         GeolocationService,
-        WimtService
+        WimtService,
+        WebsocketService
     ],
     bootstrap: [AppComponent]
 })

@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-
-import {Http, Headers} from '@angular/http';
+import {WebsocketService} from "../websocket.service"
 
 @Component({
     selector: 'app-track',
@@ -8,35 +7,20 @@ import {Http, Headers} from '@angular/http';
     styleUrls: ['./track.component.css']
 })
 export class TrackComponent implements OnInit {
-    public lat;
-    public lng;
-    public polyLines = [];
+    public websocket;
 
-    constructor(private http: Http,) {
-        this.http = http;
+    constructor(private websocketService: WebsocketService) {
+        this.websocket = websocketService.connect("ws://localhost:3001/echo");
+        this.websocket.subscribe(response => {
+            console.info("response", response);
+        });
+        (<any>window).ws = this.websocket;
     }
 
     ngOnInit() {
-        this.lat = -33.924158;
-        this.lng = 18.454311;
+    }
 
-        this.http.get("assets/journey.json")
-            .map(response => response.json())
-            .subscribe((response) => {
-                for (let itinerary of response.itineraries) {
-                    let coords = [];
-                    for (let leg of itinerary.legs) {
-                        if (leg.type == "Walking") {
-                            coords.concat(leg.geometry.coordinates)
-                        } else if (leg.type == "Transit") {
-                            for (let waypoint of leg.waypoints) {
-                                coords.push(
-                                    waypoint.stop.geometry.coordinates)
-                            }
-                        }
-                    }
-                    this.polyLines.push(coords);
-                }
-            })
+    echo() {
+        this.websocket.next("foo")
     }
 }

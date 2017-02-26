@@ -11,7 +11,12 @@ import (
 
 var addr = flag.String("addr", "localhost:3001", "http service address")
 
-var upgrader = websocket.Upgrader{} // use default options
+var upgrader = websocket.Upgrader{
+	// Allow cross origin
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
 
 func echo(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
@@ -43,7 +48,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic("index not found")
 	}
-	homeTemplate.Execute(w, "ws://"+r.Host+"/echo")
+	homeTemplate.Execute(w, "ws://" + r.Host + "/echo")
 }
 
 func main() {

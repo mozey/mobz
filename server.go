@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 )
 
-var addr = flag.String("addr", "localhost:3001", "http service address")
+var addr = flag.String("addr", "localhost:4100", "http service address")
 
 var upgrader = websocket.Upgrader{
 	// Allow cross origin

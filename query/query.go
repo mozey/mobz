@@ -52,11 +52,64 @@ func getToken() models.Token {
 	return token
 }
 
+func getJourney(token models.Token) models.Journey {
+	client := http.Client{}
+
+	body := `
+{
+	"geometry": {
+		"type": "Multipoint",
+		"coordinates": [
+			[
+				18.3799843,
+				-33.9510746
+			],
+			[
+				18.421789,
+				-33.906111
+			]
+		]
+	},
+	"time": "2017-02-28T10:55:25.575Z",
+	"timeType": "DepartAfter",
+	"profile": "ClosestToTime",
+	"maxItineraries":5
+}
+`
+
+	req, _ := http.NewRequest(
+		"POST",
+		fmt.Sprintf("%v/journeys", config.Wimt.ApiUrl),
+		bytes.NewBufferString(body))
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", token.AccessToken))
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+
+	checkHttpResp(resp, err)
+	defer resp.Body.Close()
+
+	dec := json.NewDecoder(resp.Body)
+	var journey models.Journey
+	err = dec.Decode(&journey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return journey
+}
+
 func main() {
 	config.Load("./config.json")
-	token := getToken()
+	//token := getToken()
+	//journey := getJourney(token)
+
+	journey := models.Journey{}
+	journey.Load("ui/src/assets/journey2.json")
+
 	//b, _ := json.MarshalIndent(config, "", "    ")
-	b, _ := json.MarshalIndent(token, "", "    ")
+	b, _ := json.MarshalIndent(journey, "", "    ")
 	fmt.Println(string(b))
 }
 

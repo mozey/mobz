@@ -35,7 +35,7 @@ export class WimtService {
     // TODO Write code to refresh token
     // TODO Better stub handling
     journeyMultipoint(coordinates: any) {
-        return this.http.get("assets/journey2.json")
+        return this.http.get("assets/test.json")
             .map(response => response.json())
     }
 

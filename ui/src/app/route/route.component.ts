@@ -23,7 +23,7 @@ export class RouteComponent implements OnInit {
                 private wimt: WimtService,
                 private modalService: NgbModal,
                 private router: Router,
-                    private geolocation: GeolocationService) {
+                private geolocation: GeolocationService) {
     }
 
     ngOnInit() {
@@ -33,9 +33,9 @@ export class RouteComponent implements OnInit {
             this.position = position;
 
             this.route.queryParams.subscribe(queryParams => {
-                this.lat = Number(queryParams["lat"])
-                this.lng = Number(queryParams["lng"])
-            })
+                this.lat = Number(queryParams["lat"]);
+                this.lng = Number(queryParams["lng"]);
+            });
             // (<any>window).mobz = this.route.queryParams;
 
             this.wimt.journeyMultipoint([
@@ -79,15 +79,22 @@ export class RouteComponent implements OnInit {
                 let coords = [];
                 for (let leg of itinerary.legs) {
                     if (leg.type == "Walking") {
-                        coords.concat(leg.geometry.coordinates)
+                        coords.concat([
+                            leg.geometry.coordinates[0].lng,
+                            leg.geometry.coordinates[0].lat,
+                        ])
                     } else if (leg.type == "Transit") {
                         for (let waypoint of leg.waypoints) {
-                            if (waypoint.geometry) {
-                                coords.push(
-                                    waypoint.geometry.coordinates)
-                            } else if (waypoint.stop) {
-                                coords.push(
-                                    waypoint.stop.geometry.coordinates)
+                            if (waypoint.geometry && waypoint.geometry.coordinates) {
+                                coords.push([
+                                    waypoint.geometry.coordinates.lat,
+                                    waypoint.geometry.coordinates.lng,
+                                ])
+                            } else if (waypoint.stop && waypoint.stop.geometry.coordinates) {
+                                coords.push([
+                                    waypoint.stop.geometry.coordinates[0].lng,
+                                    waypoint.stop.geometry.coordinates[0].lat,
+                                ])
                             }
                         }
                     }
@@ -102,7 +109,7 @@ export class RouteComponent implements OnInit {
             console.info("Track itinerary ", this.itinerary.id);
             let queryParams = {
                 "itinerary": this.itinerary.id,
-            }
+            };
             this.router.navigate(["/track"], {queryParams: queryParams})
         } else {
             alert("Please select a route");

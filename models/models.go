@@ -14,16 +14,57 @@ type Token struct {
 	TokenType   string `json:"token_type"`
 }
 
+type Point struct {
+	Lng float64 `json:"lng"`
+	Lat float64 `json:"lat"`
+}
+type WimtPoint struct {
+	Type        string `json:"type"`
+	Coordinates []float64 `json:"coordinates"`
+}
+type WimtMultiPoint struct {
+	Type        string `json:"type"`
+	Coordinates [][]float64 `json:"coordinates"`
+}
+type Geometry struct {
+	Type        string `json:"type"`
+	Coordinates []Point `json:"coordinates"`
+}
+
+func (geometry *Geometry) UnmarshalJSON(bArr []byte) (err error) {
+	point, multiPoint := WimtPoint{}, WimtMultiPoint{}
+	// Point
+	if err = json.Unmarshal(bArr, &point); err == nil {
+		g := Geometry{}
+		g.Type = point.Type
+		g.Coordinates = []Point{{
+			Lng: point.Coordinates[0],
+			Lat: point.Coordinates[1],
+		}}
+		*geometry = g
+		return
+	}
+	// LineString and MultiPoint
+	if err = json.Unmarshal(bArr, &multiPoint); err == nil {
+		g := Geometry{}
+		g.Type = point.Type
+		g.Coordinates = make([]Point, len(multiPoint.Coordinates))
+		for i, coord := range multiPoint.Coordinates {
+			g.Coordinates[i] = Point{
+				Lng: coord[0],
+				Lat: coord[1],
+			}
+		}
+		*geometry = g
+		return
+	}
+	return
+}
+
 type Journey struct {
 	ID             string `json:"id"`
 	Href           string `json:"href"`
-	Geometry       struct {
-					   Type        string `json:"type"`
-					   Coordinates []struct {
-						   Num0 float64 `json:"0"`
-						   Num1 float64 `json:"1"`
-					   } `json:"coordinates"`
-				   } `json:"geometry"`
+	Geometry       Geometry `json:"geometry"`
 	Time           time.Time `json:"time"`
 	TimeType       string `json:"timeType"`
 	Profile        string `json:"profile"`
@@ -59,10 +100,7 @@ type Journey struct {
 			Waypoints  []struct {
 				Location      struct {
 								  Address  string `json:"address"`
-								  Geometry struct {
-											   Type        string `json:"type"`
-											   Coordinates []float64 `json:"coordinates"`
-										   } `json:"geometry"`
+								  Geometry Geometry `json:"geometry"`
 							  } `json:"location,omitempty"`
 				ArrivalTime   time.Time `json:"arrivalTime"`
 				DepartureTime time.Time `json:"departureTime"`
@@ -76,20 +114,11 @@ type Journey struct {
 											   Culture string `json:"culture"`
 										   } `json:"agency"`
 								  Name     string `json:"name"`
-								  Geometry struct {
-											   Type        string `json:"type"`
-											   Coordinates []float64 `json:"coordinates"`
-										   } `json:"geometry"`
+								  Geometry Geometry `json:"geometry"`
 								  Modes    []string `json:"modes"`
 							  } `json:"stop,omitempty"`
 			} `json:"waypoints"`
-			Geometry   struct {
-						   Type        string `json:"type"`
-						   Coordinates []struct {
-							   Num0 float64 `json:"0"`
-							   Num1 float64 `json:"1"`
-						   } `json:"coordinates"`
-					   } `json:"geometry"`
+			Geometry   Geometry `json:"geometry"`
 			Directions []struct {
 				Instruction string `json:"instruction"`
 				Distance    struct {
@@ -138,6 +167,20 @@ type Journey struct {
 					   } `json:"vehicle,omitempty"`
 		} `json:"legs"`
 	} `json:"itineraries"`
+}
+
+func (j *Journey) Load(journeyPath string) {
+	// Override default config
+	file, err := os.Open(journeyPath)
+	if err == nil {
+		decoder := json.NewDecoder(file)
+		err = decoder.Decode(&j)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		log.Fatal(fmt.Sprintf("Journey path '%s' does not exist", journeyPath))
+	}
 }
 
 type Config struct {

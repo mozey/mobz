@@ -10,9 +10,11 @@ import (
 	"encoding/json"
 	"net/url"
 	"bytes"
+	"time"
 )
 
 var config = models.Config{}
+var token = models.Token{}
 
 func checkHttpResp(resp *http.Response, err error) {
 	if err != nil {
@@ -23,7 +25,27 @@ func checkHttpResp(resp *http.Response, err error) {
 	}
 }
 
-func getToken() models.Token {
+func validToken() bool {
+	// Token not initialized?
+	if token.AccessToken == "" {
+		return false
+	}
+
+	// Token expired?
+	diff := token.ExpiresAt.Sub(token.CreatedAt)
+	if diff <= 0 {
+		return false
+	}
+
+	// Token is valid
+	return true
+}
+
+func setToken() {
+	if validToken() {
+		return
+	}
+
 	client := http.Client{}
 
 	data := url.Values{}
@@ -43,16 +65,24 @@ func getToken() models.Token {
 	defer resp.Body.Close()
 
 	dec := json.NewDecoder(resp.Body)
-	var token models.Token
 	err = dec.Decode(&token)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return token
+	// Set ExpiresAt so it can be checked to see if the token is still valid
+	loc, _ := time.LoadLocation("UTC")
+	token.CreatedAt = time.Now().In(loc)
+	token.ExpiresAt = time.Now().In(loc).Add(
+		time.Duration(token.ExpiresIn) * time.Second)
+
+	b, _ := json.MarshalIndent(token, "", "    ")
+	fmt.Println(string(b))
 }
 
-func getJourney(token models.Token) models.Journey {
+func getJourney() models.Journey {
+	setToken()
+
 	client := http.Client{}
 
 	body := `
@@ -70,7 +100,7 @@ func getJourney(token models.Token) models.Journey {
 			]
 		]
 	},
-	"time": "2017-02-28T10:55:25.575Z",
+	"time": "2017-03-01T10:55:25.575Z",
 	"timeType": "DepartAfter",
 	"profile": "ClosestToTime",
 	"maxItineraries":5
@@ -102,14 +132,17 @@ func getJourney(token models.Token) models.Journey {
 
 func main() {
 	config.Load("./config.json")
-	//token := getToken()
-	//journey := getJourney(token)
+	journey := getJourney()
 
-	journey := models.Journey{}
-	journey.Load("ui/src/assets/journey2.json")
+	//journey := models.Journey{}
+	//journey.Load("ui/src/assets/journey2.json")
 
 	//b, _ := json.MarshalIndent(config, "", "    ")
 	b, _ := json.MarshalIndent(journey, "", "    ")
 	fmt.Println(string(b))
 }
+
+
+
+
 

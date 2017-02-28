@@ -12,6 +12,8 @@ type Token struct {
 	AccessToken string `json:"access_token"`
 	ExpiresIn   int `json:"expires_in"`
 	TokenType   string `json:"token_type"`
+	CreatedAt   time.Time `json:"expires_at"`
+	ExpiresAt   time.Time `json:"expires_at"`
 }
 
 type Point struct {
@@ -61,6 +63,7 @@ func (geometry *Geometry) UnmarshalJSON(bArr []byte) (err error) {
 	return
 }
 
+// TODO Custom unmarshal fns to reduce empty properties on Journey
 type Journey struct {
 	ID             string `json:"id"`
 	Href           string `json:"href"`

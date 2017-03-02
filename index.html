@@ -7,7 +7,6 @@
         window.addEventListener("load", function (evt) {
 
             var output = document.getElementById("output");
-            var input = document.getElementById("input");
             var ws;
 
             var print = function (message) {
@@ -39,10 +38,24 @@
 
             document.getElementById("send").onclick = function (evt) {
                 if (!ws) {
+                    print("Socket error");
                     return false;
                 }
-                print("SEND: " + input.value);
-                ws.send(input.value);
+                var second = 1000;
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var coords = position.coords;
+                    coords.success = true;
+                    var message = JSON.stringify(coords);
+                    print("SEND: " + message);
+                    ws.send(message);
+                }, function() {
+                    var coords = {success: false, latitude: 0, longitude: 0};
+                    var message = JSON.stringify(coords);
+                    print("SEND: " + message);
+                    ws.send(message);
+                }, {
+                    timeout: 2 * second // seconds
+                });
                 return false;
             };
 
@@ -69,7 +82,6 @@
             <form>
                 <button id="open">Open</button>
                 <button id="close">Close</button>
-                <input id="input" type="text" value="Hello world!"/>
                 <button id="send">Send</button>
             </form>
         </td>

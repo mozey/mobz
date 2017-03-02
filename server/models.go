@@ -1,4 +1,4 @@
-package models
+package main
 
 import (
 	"time"
@@ -207,5 +207,13 @@ func (c *Config) Load(configPath string) {
 	} else {
 		log.Fatal(fmt.Sprintf("Config path '%s' does not exist", configPath))
 	}
+}
+
+type WebSocketRequest struct {
+	Route string `json:"route"`
+	Params []struct {
+		Key string `json:"key"`
+		Value string `json:"value"`
+	} `json:"params"`
 }
 

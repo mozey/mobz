@@ -34,9 +34,10 @@ Run the server
 
     cd mobz 
     
-    go run server.go
+    go run server/*.go
     
-Open [localhost:4100](localhost:4100)
+Open [localhost:4100](localhost:4100) in multiple browsers,
+location is broadcast to all clients
 
 
 # Simulation

@@ -1,4 +1,4 @@
-package main
+package types
 
 import (
 	"time"
@@ -173,7 +173,6 @@ type Journey struct {
 }
 
 func (j *Journey) Load(journeyPath string) {
-	// Override default config
 	file, err := os.Open(journeyPath)
 	if err == nil {
 		decoder := json.NewDecoder(file)
@@ -196,7 +195,6 @@ type Config struct {
 }
 
 func (c *Config) Load(configPath string) {
-	// Override default config
 	file, err := os.Open(configPath)
 	if err == nil {
 		decoder := json.NewDecoder(file)
@@ -217,3 +215,21 @@ type WebSocketRequest struct {
 	} `json:"params"`
 }
 
+type StubCoord struct {
+	Latitude float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+}
+type StubCoords []StubCoord
+
+func (c *StubCoords) Load(stubPath string) {
+	file, err := os.Open(stubPath)
+	if err == nil {
+		decoder := json.NewDecoder(file)
+		err = decoder.Decode(&c)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		log.Fatal(fmt.Sprintf("Coords stub '%s' does not exist", stubPath))
+	}
+}

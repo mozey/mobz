@@ -1,6 +1,7 @@
 package main
 
 import (
+	"../types"
 	"flag"
 	"html/template"
 	"log"
@@ -10,6 +11,20 @@ import (
 )
 
 var addr = flag.String("addr", "localhost:4100", "http service address")
+//var addr = flag.String("addr", "0.0.0.0:4100", "http service address")
+
+var config = types.Config{}
+var coords = types.StubCoords{}
+var coordIndex = 0;
+
+func getNextLocation() types.StubCoord {
+	defer (func() {
+		coordIndex++ // Next coord
+		coordIndex = coordIndex % len(coords) // Wrap around
+		log.Println(coordIndex)
+	})()
+	return coords[coordIndex]
+}
 
 func home(w http.ResponseWriter, r *http.Request) {
 	// TODO index.html should be compiled into the bin,
@@ -20,12 +35,29 @@ func home(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(fmt.Sprintf("%s not found", index))
 	}
-	homeTemplate.Execute(w, "ws://" + r.Host + "/location")
+
+	location := getNextLocation()
+	log.Println(fmt.Sprintf("%v", location))
+	data := struct {
+		WebSocketUrl string
+		Latitude float64
+		Longitude float64
+	} {
+		"ws://" + r.Host + "/location",
+		location.Latitude,
+		location.Longitude,
+	}
+	homeTemplate.Execute(w, data)
+	//homeTemplate.Execute(w, "wss://" + r.Host + "/location")
 }
 
 func main() {
 	flag.Parse()
 	log.SetFlags(0)
+
+	config.Load("server/config.json")
+	coords.Load("server/coords.json")
+
 	//http.HandleFunc("/echo", echo)
 	http.HandleFunc("/", home)
 
@@ -40,4 +72,7 @@ func main() {
 	fs := http.FileServer(http.Dir("./"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	log.Fatal(http.ListenAndServe(*addr, nil))
+	//log.Fatal(
+	//	http.ListenAndServeTLS(
+	//		*addr, "server/server.crt", "server/server.key", nil))
 }

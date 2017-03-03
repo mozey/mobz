@@ -1,3 +1,6 @@
 _excluded
 .idea/
-config.json
+
+server/config.json
+server/server.key
+server/server.crt

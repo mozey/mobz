@@ -1,8 +1,8 @@
 package main
 
 import (
+	"../types"
 	"fmt"
-	"../models"
 	//"net/url"
 	"net/http"
 	//"encoding/json"
@@ -13,8 +13,8 @@ import (
 	"time"
 )
 
-var config = models.Config{}
-var token = models.Token{}
+var config = types.Config{}
+var token = types.Token{}
 
 func checkHttpResp(resp *http.Response, err error) {
 	if err != nil {
@@ -80,7 +80,7 @@ func setToken() {
 	fmt.Println(string(b))
 }
 
-func getJourney() models.Journey {
+func getJourney() types.Journey {
 	setToken()
 
 	client := http.Client{}
@@ -100,7 +100,7 @@ func getJourney() models.Journey {
 			]
 		]
 	},
-	"time": "2017-03-01T10:55:25.575Z",
+	"time": "2017-03-04T10:55:25.575Z",
 	"timeType": "DepartAfter",
 	"profile": "ClosestToTime",
 	"maxItineraries":5
@@ -121,7 +121,7 @@ func getJourney() models.Journey {
 	defer resp.Body.Close()
 
 	dec := json.NewDecoder(resp.Body)
-	var journey models.Journey
+	var journey types.Journey
 	err = dec.Decode(&journey)
 	if err != nil {
 		log.Fatal(err)
@@ -131,10 +131,10 @@ func getJourney() models.Journey {
 }
 
 func main() {
-	config.Load("./config.json")
+	config.Load("server/config.json")
 	journey := getJourney()
 
-	//journey := models.Journey{}
+	//journey := Journey{}
 	//journey.Load("ui/src/assets/journey2.json")
 
 	//b, _ := json.MarshalIndent(config, "", "    ")

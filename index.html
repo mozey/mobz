@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
     <meta charset="utf-8">
     <title>Mobz</title>
     <script>
@@ -8,6 +9,13 @@
 
             var output = document.getElementById("output");
             var ws;
+
+            var coords = {
+                latitude: "{{.Latitude}}",
+                longitude: "{{.Longitude}}"
+            };
+            coords["latitude"] = Number(coords["latitude"]);
+            coords["longitude"] = Number(coords["longitude"]);
 
             var print = function (message) {
                 var d = document.createElement("div");
@@ -19,7 +27,7 @@
                 if (ws) {
                     return false;
                 }
-                ws = new WebSocket("{{.}}");
+                ws = new WebSocket("{{.WebSocketUrl}}");
                 ws.onopen = function (evt) {
                     print("OPEN");
                 };
@@ -42,20 +50,28 @@
                     return false;
                 }
                 var second = 1000;
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    var coords = position.coords;
+//                navigator.geolocation.getCurrentPosition(function(position) {
+//                    console.info("position", position);
+//                    var coords = position.coords;
+//                    coords.success = true;
+//                    var message = JSON.stringify(coords);
+//                    print("SEND: " + message);
+//                    ws.send(message);
+//                }, function(error) {
+//                    console.info("error", error);
+//                    print("ERROR: " + error.code + " " + error.message);
+//                }, {
+//                    timeout: 5 * second, // seconds
+//                    maximumAge: 60000,
+//                    enableHighAccuracy: false
+//                });
+                setTimeout(function() {
+                    console.info("position", {coords: coords});
                     coords.success = true;
                     var message = JSON.stringify(coords);
                     print("SEND: " + message);
                     ws.send(message);
-                }, function() {
-                    var coords = {success: false, latitude: 0, longitude: 0};
-                    var message = JSON.stringify(coords);
-                    print("SEND: " + message);
-                    ws.send(message);
-                }, {
-                    timeout: 2 * second // seconds
-                });
+                }, 2 * second);
                 return false;
             };
 

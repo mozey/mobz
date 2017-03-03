@@ -1,27 +1,46 @@
-[
-    {
-        "latitude": -33.918512,
-        "longitude": 18.384086,
-        "description": "Sea Point"
-    },
-    {
-        "latitude": -33.906046,
-        "longitude": 18.421808,
-        "description": "Waterfront"
-    },
-    {
-        "latitude": -33.933839,
-        "longitude": 18.403757,
-        "description": "Tamboerskloof"
-    },
-    {
-        "latitude": -33.936428,
-        "longitude": 18.413494,
-        "description": "Gardens"
-    },
-    {
-        "latitude": -33.951855,
-        "longitude": 18.376865,
-        "description": "Camps Bay"
-    }
-]
+{
+    "start": [
+        {
+            "friend_id": 0,
+            "latitude": -34.035552,
+            "longitude": 18.356105,
+            "description": "Hout Bay"
+        },
+        {
+            "friend_id": 1,
+            "latitude": -33.918512,
+            "longitude": 18.384086,
+            "description": "Sea Point"
+        },
+        {
+            "friend_id": 2,
+            "latitude": -33.906046,
+            "longitude": 18.421808,
+            "description": "Waterfront"
+        },
+        {
+            "friend_id": 3,
+            "latitude": -33.940056,
+            "longitude": 18.488681,
+            "description": "Mowbray"
+        },
+        {
+            "friend_id": 4,
+            "latitude": -33.936428,
+            "longitude": 18.413494,
+            "description": "Gardens"
+        },
+        {
+            "friend_id": 5,
+            "latitude": -33.951855,
+            "longitude": 18.376865,
+            "description": "Camps Bay"
+        },
+        {
+            "friend_id": 6,
+            "latitude": -33.837996,
+            "longitude": 18.517802,
+            "description": "Table View"
+        }
+    ]
+}

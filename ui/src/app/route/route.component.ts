@@ -99,6 +99,7 @@ export class RouteComponent implements OnInit {
                         }
                     }
                 }
+                console.info("route", JSON.stringify(coords, null, 2));
                 this.polyLines.push(coords);
             }
         }

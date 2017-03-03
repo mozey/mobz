@@ -26,7 +26,7 @@ Run dev server with live reload
 Open [localhost:4200](localhost:4200)
 
 
-# Websocket server
+# Server
 
 Built with [Go](https://golang.org/)
 

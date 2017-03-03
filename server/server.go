@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"io/ioutil"
 	"fmt"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 )
 
 var addr = flag.String("addr", "localhost:4100", "http service address")
@@ -17,13 +19,12 @@ var config = types.Config{}
 var coords = types.StubCoords{}
 var coordIndex = 0;
 
-func getNextLocation() types.StubCoord {
+func getStartLocation() types.StubCoord {
 	defer (func() {
 		coordIndex++ // Next coord
-		coordIndex = coordIndex % len(coords) // Wrap around
-		log.Println(coordIndex)
+		coordIndex = coordIndex % len(coords.Start) // Wrap around
 	})()
-	return coords[coordIndex]
+	return coords.Start[coordIndex]
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
@@ -36,8 +37,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		panic(fmt.Sprintf("%s not found", index))
 	}
 
-	location := getNextLocation()
-	log.Println(fmt.Sprintf("%v", location))
+	location := getStartLocation()
 	data := struct {
 		WebSocketUrl string
 		Latitude float64
@@ -58,20 +58,28 @@ func main() {
 	config.Load("server/config.json")
 	coords.Load("server/coords.json")
 
+	router := mux.NewRouter()
+
 	//http.HandleFunc("/echo", echo)
-	http.HandleFunc("/", home)
+	router.HandleFunc("/", home)
 
 	hub := NewHub()
 	go hub.Run()
-	http.HandleFunc("/location", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/location", func(w http.ResponseWriter, r *http.Request) {
 		ServeWs(hub, w, r)
 	})
 
 	// TODO Compile static resources into the bin,
 	// see https://github.com/elazarl/go-bindata-assetfs
-	fs := http.FileServer(http.Dir("./"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
-	log.Fatal(http.ListenAndServe(*addr, nil))
+	router.PathPrefix("/assets/").Handler(
+		http.StripPrefix(
+			"/assets/", http.FileServer(http.Dir("./ui/src/assets"))))
+
+	// Allow CORS
+	// http://stackoverflow.com/a/40987420/639133
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	log.Fatal(http.ListenAndServe(*addr, handlers.CORS(originsOk)(router)))
+
 	//log.Fatal(
 	//	http.ListenAndServeTLS(
 	//		*addr, "server/server.crt", "server/server.key", nil))

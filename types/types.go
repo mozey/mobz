@@ -208,18 +208,22 @@ func (c *Config) Load(configPath string) {
 }
 
 type WebSocketRequest struct {
-	Route string `json:"route"`
+	Route  string `json:"route"`
 	Params []struct {
-		Key string `json:"key"`
+		Key   string `json:"key"`
 		Value string `json:"value"`
 	} `json:"params"`
 }
 
 type StubCoord struct {
-	Latitude float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
+	FriendID    int `json:"friend_id"`
+	Latitude    float64 `json:"latitude"`
+	Longitude   float64 `json:"longitude"`
+	Description string `json:"description"`
 }
-type StubCoords []StubCoord
+type StubCoords struct {
+	Start []StubCoord `json:"start"`
+}
 
 func (c *StubCoords) Load(stubPath string) {
 	file, err := os.Open(stubPath)

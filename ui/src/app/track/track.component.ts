@@ -10,11 +10,11 @@ export class TrackComponent implements OnInit {
     public websocket;
 
     constructor(private websocketService: WebsocketService) {
-        this.websocket = websocketService.connect("ws://localhost:3001/echo");
+        this.websocket = websocketService.connect("ws://localhost:4100/location");
         this.websocket.subscribe(response => {
-            console.info("response", response);
+            let location = JSON.parse(response["data"]);
+            console.info("response", JSON.stringify(location, null, 2));
         });
-        (<any>window).ws = this.websocket;
     }
 
     ngOnInit() {

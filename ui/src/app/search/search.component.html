@@ -1,19 +1,39 @@
 <div class="page container">
-    <br>
-    <br>
-    <br>
-    <div class="page-header">
-        <h1>Where to?</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <form [formGroup]="searchForm" (submit)="listRoutes($event)">
+                <div class="form-group">
+                    <label for="destination"><strong>Where to?</strong></label>
+                    <input id="destination" type="text" class="form-control"
+                           formControlName="destination"
+                           [ngbTypeahead]="search"
+                           [resultFormatter]="searchResultFormatter"
+                           [inputFormatter]="searchInputFormatter"/>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <form [formGroup]="searchForm" (submit)="listRoutes($event)">
-        <input type="text" class="form-control" formControlName="destination"
-               [ngbTypeahead]="search"
-               [resultFormatter]="searchResultFormatter"
-               [inputFormatter]="searchInputFormatter"/>
-        <br>
-        <button class="btn btn-primary btn-lg btn-block" type="submit">List
-            Routes
-        </button>
-    </form>
+    <div class="row">
+        <div class="col-md-6">
+            <strong>Depart at</strong><br>
+            <ngb-datepicker #dp [(ngModel)]="departDate" (navigate)="date = $event.next"></ngb-datepicker>
+        </div>
+        <div class="col-md-6">
+            <strong>Depart at</strong><br>
+            <ngb-timepicker [(ngModel)]="departTime"></ngb-timepicker>
+        </div>
+    </div>
+    <br>
+
+    <div class="row">
+        <div class="col-md-12">
+            <button class="btn btn-primary btn-lg btn-block"
+                    (click)="listRoutes()">
+                Go!
+            </button>
+        </div>
+    </div>
+    <br>
 </div>
+

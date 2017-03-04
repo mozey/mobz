@@ -8,6 +8,9 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/switchMap';
 import {GeocodeService} from "../geocode.service";
+import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+
+const now = new Date();
 
 function validDestination(c: FormControl) {
     if (!c.value["geometry"]) {
@@ -24,6 +27,10 @@ function validDestination(c: FormControl) {
     styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit {
+    departDate: NgbDateStruct;
+    date: {year: number, month: number};
+    departTime = {hour: 16, minute: 0};
+
     constructor(private fb: FormBuilder,
                 private geocode: GeocodeService,
                 private router: Router) {
@@ -64,13 +71,15 @@ export class SearchComponent implements OnInit {
     listRoutes() {
         console.info("searchForm.valid", this.searchForm.valid);
         if (this.searchForm.valid) {
-            let form = this.searchForm.value
+            let form = this.searchForm.value;
             let destination = form.destination;
+            console.info("departDate", this.departDate);
+            console.info("departTime", this.departTime);
             let queryParams = {
                 "lat": destination["geometry"]["location"]["lat"],
                 "lng": destination["geometry"]["location"]["lng"]
-            }
-            this.router.navigate(["/route"], {queryParams: queryParams})
+            };
+            // this.router.navigate(["/route"], {queryParams: queryParams})
         }
     }
 }

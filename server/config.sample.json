@@ -1,7 +1,7 @@
 {
     "wimt": {
-        "connectUrl": "",
-        "apiUrl": "",
+        "connectUrl": "https://identity.whereismytransport.com/connect/token",
+        "apiUrl": "https://platform.whereismytransport.com/api",
         "client_id": "",
         "client_secret": ""
     }

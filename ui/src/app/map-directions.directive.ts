@@ -1,17 +1,10 @@
+// Directions service
+// https://github.com/SebastianM/angular2-google-maps/issues/495
+
 import {Directive, Input} from '@angular/core';
 import {GoogleMapsAPIWrapper} from 'angular2-google-maps/core/services/google-maps-api-wrapper';
 declare let google: any;
 
-/*
- @Directive({
- selector: '[appMapDirections]'
- })
- export class MapDirectionsDirective {
-
- constructor() { }
-
- }
- */
 
 @Directive({
     selector: 'sebm-google-map-directions'

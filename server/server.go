@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"sync"
 )
 
 var addr = flag.String("addr", "localhost:4100", "http service address")
@@ -18,13 +19,17 @@ var addr = flag.String("addr", "localhost:4100", "http service address")
 var config = types.Config{}
 var coords = types.StubCoords{}
 var coordIndex = 0;
+var coordMutex = &sync.Mutex{}
 
 func getStartLocation() types.StubCoord {
 	defer (func() {
 		coordIndex++ // Next coord
 		coordIndex = coordIndex % len(coords.Start) // Wrap around
 	})()
-	return coords.Start[coordIndex]
+	coordMutex.Lock()
+	coord := coords.Start[coordIndex]
+	coordMutex.Unlock()
+	return coord
 }
 
 func home(w http.ResponseWriter, r *http.Request) {

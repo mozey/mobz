@@ -17,13 +17,15 @@ import {GeocodeService} from './geocode.service';
 import {GeolocationService} from './geolocation.service';
 import {WimtService} from './wimt.service';
 import {WebsocketService} from './websocket.service';
+import { MapDirectionsDirective } from './map-directions.directive';
 
 @NgModule({
     declarations: [
         AppComponent,
         RouteComponent,
         TrackComponent,
-        SearchComponent
+        SearchComponent,
+        MapDirectionsDirective
     ],
     imports: [
         BrowserModule,

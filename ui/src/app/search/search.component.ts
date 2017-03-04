@@ -10,8 +10,6 @@ import 'rxjs/add/operator/switchMap';
 import {GeocodeService} from "../geocode.service";
 import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
-const now = new Date();
-
 function validDestination(c: FormControl) {
     if (!c.value["geometry"]) {
         return {
@@ -69,17 +67,25 @@ export class SearchComponent implements OnInit {
             .do(() => this.searching = false);
 
     listRoutes() {
-        console.info("searchForm.valid", this.searchForm.valid);
-        if (this.searchForm.valid) {
+        // TODO Better validation for departure date and time
+        if (
+            this.searchForm.valid &&
+            this.departDate.year &&
+            this.departTime.hour
+        ) {
+            console.info("searchForm.valid", this.searchForm.valid);
             let form = this.searchForm.value;
             let destination = form.destination;
-            console.info("departDate", this.departDate);
-            console.info("departTime", this.departTime);
             let queryParams = {
+                "year": this.departDate.year,
+                "month": this.departDate.month,
+                "day": this.departDate.day,
+                "hour": this.departTime.hour,
+                "minute": this.departTime.minute,
                 "lat": destination["geometry"]["location"]["lat"],
                 "lng": destination["geometry"]["location"]["lng"]
             };
-            // this.router.navigate(["/route"], {queryParams: queryParams})
+            this.router.navigate(["/route"], {queryParams: queryParams})
         }
     }
 }

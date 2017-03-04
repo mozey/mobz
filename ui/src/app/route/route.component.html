@@ -36,21 +36,41 @@
 <div class="page container">
     <div class="row">
         <div class="col-md-12">
-            <span class="float-left"
-                  *ngFor="let itinerary of journey.itineraries">
-                <button type="radio" class="btn btn-secondary"
-                        placement="bottom"
-                        (click)="showRoute(itinerary)">
-                    Route
+            <form class="form-inline">
+                <label class="sr-only" for="inlineFormInput">Name</label>
+                <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0"
+                       id="inlineFormInput" placeholder="Jane Doe">
+
+                <label class="sr-only" for="inlineFormInputGroup">Pickup</label>
+                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                    <div class="input-group-addon">@</div>
+                    <input type="text" class="form-control"
+                           id="inlineFormInputGroup"
+                           placeholder="Pickup">
+                </div>
+
+                <button
+                    type="button" class="btn btn-primary"
+                    (click)="track()">
+                    Join!
                 </button>
-                <br>
-                <a href="javascript:"
-                   (click)="showRouteDetails(itinerary, routeDetailsTemplate)">
-                    Details</a>
-            </span>
+
+                <div>
+                    <span class="float-left">
+                        &nbsp;&nbsp;
+                    </span>
+                    <span class="float-left"
+                          *ngFor="let itinerary of journey.itineraries">
+                        <br>
+                        <a href="javascript:"
+                           (click)="showRouteDetails(itinerary, routeDetailsTemplate)">
+                            @&nbsp;</a>
+                    </span>
+                </div>
+            </form>
         </div>
     </div>
-    <div class="row">&nbsp;</div>
+    <br>
 
     <sebm-google-map [latitude]="lat" [longitude]="lng" [zoom]="zoom">
         <sebm-google-map-polyline *ngFor="let coords of polyLines">
@@ -60,46 +80,6 @@
             </sebm-google-map-polyline-point>
         </sebm-google-map-polyline>
     </sebm-google-map>
-    <div class="row">&nbsp;</div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <button type="button"
-                    class="btn btn-primary btn-lg btn-block"
-                    (click)="track()">
-                Let's Go!
-            </button>
-        </div>
-    </div>
-    <div class="row">&nbsp;</div>
-
-    <!-- Print itineraries -->
-    <!--
-        <div class="row" *ngFor="let itinerary of journey.itineraries">
-            <div class="col-md-12">
-                itinerary.id {{itinerary.id}}<br>
-                <div class="row" *ngFor="let leg of itinerary.legs">
-                    <div class="col-md-9 offset-md-3">
-                        type {{leg.type}}<br>
-                        <div *ngIf="leg.type == 'Walking'">
-                            <div class="row" *ngFor="let direction of leg.directions">
-                                <div class="col-md-9 offset-md-3">
-                                    {{direction.instruction}}<br>
-                                </div>
-                            </div>
-                        </div>
-                        <div *ngIf="leg.type == 'Transit'">
-                            <div class="row" *ngFor="let waypoint of leg.waypoints">
-                                <div class="col-md-9 offset-md-3">
-                                    {{waypoint.stop.name}}<br>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">&nbsp;</div>
-    -->
+    <br>
 
 </div>

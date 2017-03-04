@@ -24,9 +24,7 @@ export class RouteComponent implements OnInit {
                 private modalService: NgbModal,
                 private router: Router,
                 private geolocation: GeolocationService) {
-    }
 
-    ngOnInit() {
         this.zoom = 11;
 
         this.geolocation.getCurrentPosition().subscribe(position => {
@@ -49,9 +47,49 @@ export class RouteComponent implements OnInit {
                 response => {
                     console.info("Journey multipoint results ", response);
                     this.journey = response;
+                    this.plotRoutes();
                 }
             )
         })
+    }
+
+    plotRoutes() {
+        // Clear plots
+        this.polyLines = [];
+
+        // Plot selected route
+        for (let itinerary of this.journey.itineraries) {
+            let coords = [];
+            for (let leg of itinerary.legs) {
+                if (leg.type == "Walking") {
+                    coords.concat([
+                        leg.geometry.coordinates[0].lng,
+                        leg.geometry.coordinates[0].lat,
+                    ])
+                } else if (leg.type == "Transit") {
+                    for (let waypoint of leg.waypoints) {
+                        if (waypoint.geometry && waypoint.geometry.coordinates) {
+                            coords.push([
+                                waypoint.geometry.coordinates.lat,
+                                waypoint.geometry.coordinates.lng,
+                            ])
+                        } else if (waypoint.stop && waypoint.stop.geometry.coordinates) {
+                            coords.push([
+                                waypoint.stop.geometry.coordinates[0].lng,
+                                waypoint.stop.geometry.coordinates[0].lat,
+                            ])
+                        }
+                    }
+                }
+            }
+            console.info("route", JSON.stringify(coords, null, 2));
+            this.polyLines.push(coords);
+        }
+
+        console.info("this.polyLines", this.polyLines);
+    }
+
+    ngOnInit() {
     }
 
     showRouteDetails(itinerary, routeDetailsTemplate) {
@@ -65,56 +103,12 @@ export class RouteComponent implements OnInit {
         })
     }
 
-    showRoute(newItinerary) {
-        // Set selected itinerary
-        this.itinerary = newItinerary;
-
-        // Clear plots
-        this.polyLines = [];
-
-        // Plot selected route
-        for (let itinerary of this.journey.itineraries) {
-            console.info(this.itinerary.id);
-            if (itinerary.id == this.itinerary.id) {
-                let coords = [];
-                for (let leg of itinerary.legs) {
-                    if (leg.type == "Walking") {
-                        coords.concat([
-                            leg.geometry.coordinates[0].lng,
-                            leg.geometry.coordinates[0].lat,
-                        ])
-                    } else if (leg.type == "Transit") {
-                        for (let waypoint of leg.waypoints) {
-                            if (waypoint.geometry && waypoint.geometry.coordinates) {
-                                coords.push([
-                                    waypoint.geometry.coordinates.lat,
-                                    waypoint.geometry.coordinates.lng,
-                                ])
-                            } else if (waypoint.stop && waypoint.stop.geometry.coordinates) {
-                                coords.push([
-                                    waypoint.stop.geometry.coordinates[0].lng,
-                                    waypoint.stop.geometry.coordinates[0].lat,
-                                ])
-                            }
-                        }
-                    }
-                }
-                console.info("route", JSON.stringify(coords, null, 2));
-                this.polyLines.push(coords);
-            }
-        }
-    }
-
     track() {
-        if (this.itinerary) {
-            console.info("Track itinerary ", this.itinerary.id);
-            let queryParams = {
-                "itinerary": this.itinerary.id,
-            };
-            this.router.navigate(["/track"], {queryParams: queryParams})
-        } else {
-            alert("Please select a route");
-        }
+        console.info("Track mobz link ");
+        let queryParams = {
+            "linkId": 123456790
+        };
+        this.router.navigate(["/track"], {queryParams: queryParams})
     }
 
 }

@@ -17,10 +17,11 @@
     <div class="row">
         <div class="col-md-6">
             <strong>Depart at</strong><br>
-            <ngb-datepicker #dp [(ngModel)]="departDate" (navigate)="date = $event.next"></ngb-datepicker>
+            <ngb-datepicker #dp [(ngModel)]="departDate"
+                            (navigate)="date = $event.next"></ngb-datepicker>
         </div>
         <div class="col-md-6">
-            <strong>Depart at</strong><br>
+            <strong>&nbsp;</strong><br>
             <ngb-timepicker [(ngModel)]="departTime"></ngb-timepicker>
         </div>
     </div>
@@ -30,7 +31,7 @@
         <div class="col-md-12">
             <button class="btn btn-primary btn-lg btn-block"
                     (click)="listRoutes()">
-                Go!
+                Create link
             </button>
         </div>
     </div>

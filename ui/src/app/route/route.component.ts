@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {WimtService} from '../wimt.service'
 import {Router} from '@angular/router';
-import {GeolocationService} from "../geolocation.service";
+declare let google: any;
 
 @Component({
     selector: 'app-route',
@@ -17,61 +17,71 @@ export class RouteComponent implements OnInit {
     public journey = {itineraries: []};
     public polyLines = [];
     public itinerary;
-    public position;
+    public friend = {
+        name: ""
+    };
+    public pickup = {
+        coord: <any>{},
+        display: ""
+    };
 
     constructor(private route: ActivatedRoute,
                 private wimt: WimtService,
                 private modalService: NgbModal,
-                private router: Router,
-                private geolocation: GeolocationService) {
+                private router: Router) {
 
         this.zoom = 11;
 
-        this.geolocation.getCurrentPosition().subscribe(position => {
-            this.position = position;
+        this.route.queryParams.subscribe(queryParams => {
+            this.lat = Number(queryParams["lat"]);
+            this.lng = Number(queryParams["lng"]);
+            let params = {
+                destination: {
+                    lat: this.lat,
+                    lng: this.lng
+                },
+                year: Number(queryParams["year"]),
+                month: Number(queryParams["month"]),
+                day: Number(queryParams["day"]),
+                hour: Number(queryParams["hour"]),
+                minute: Number(queryParams["minute"]),
+            };
 
-            this.route.queryParams.subscribe(queryParams => {
-                this.lat = Number(queryParams["lat"]);
-                this.lng = Number(queryParams["lng"]);
-            });
-            // (<any>window).mobz = this.route.queryParams;
-
-            this.wimt.journeyMultipoint([
-                // TODO Insert current location here
-                [
-                    Number(this.position.coords.longitude),
-                    Number(this.position.coords.latitude)
-                ],
-                [this.lng, this.lat]
-            ]).subscribe(
+            this.wimt.journeyMultipoint(params).subscribe(
                 response => {
                     console.info("Journey multipoint results ", response);
                     this.journey = response;
                     this.plotRoutes();
                 }
             )
-        })
+        });
     }
 
     plotRoutes() {
         // Clear plots
-        this.polyLines = [];
+        let polyLines = [];
+        let colors = [
+            "#B22222",
+            "#FF1493",
+            "#1E90FF",
+            "#FFD700",
+            "#228B22"];
 
-        // Plot selected route
+        // Extract routes
         for (let itinerary of this.journey.itineraries) {
             let coords = [];
             for (let leg of itinerary.legs) {
                 if (leg.type == "Walking") {
                     coords.concat([
                         leg.geometry.coordinates[0].lng,
-                        leg.geometry.coordinates[0].lat,
+                        leg.geometry.coordinates[0].lat
                     ])
                 } else if (leg.type == "Transit") {
                     for (let waypoint of leg.waypoints) {
                         if (waypoint.geometry && waypoint.geometry.coordinates) {
                             coords.push([
-                                waypoint.geometry.coordinates.lat,
                                 waypoint.geometry.coordinates.lng,
+                                waypoint.geometry.coordinates.lat
                             ])
                         } else if (waypoint.stop && waypoint.stop.geometry.coordinates) {
                             coords.push([
@@ -82,11 +92,16 @@ export class RouteComponent implements OnInit {
                     }
                 }
             }
-            console.info("route", JSON.stringify(coords, null, 2));
-            this.polyLines.push(coords);
+            // console.info("route", JSON.stringify(coords, null, 2));
+            polyLines.push({
+                strokeColor: colors.pop(),
+                coords: coords
+            });
         }
 
-        console.info("this.polyLines", this.polyLines);
+        // Plot
+        console.info("polyLines", polyLines);
+        this.polyLines = polyLines;
     }
 
     ngOnInit() {
@@ -103,8 +118,18 @@ export class RouteComponent implements OnInit {
         })
     }
 
+    setPickup(event) {
+        console.info("setPickup", event);
+        let dec = 1000;
+        let lat = Math.round(event.coords.lat * dec) / dec;
+        let lng = Math.round(event.coords.lng * dec) / dec;
+        this.pickup.coord.lat = lat;
+        this.pickup.coord.lng = lng;
+        this.pickup.display = lat + "," + lng;
+    }
+
     track() {
-        console.info("Track mobz link ");
+        console.info("Track mobz link");
         let queryParams = {
             "linkId": 123456790
         };

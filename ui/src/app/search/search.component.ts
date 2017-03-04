@@ -70,7 +70,9 @@ export class SearchComponent implements OnInit {
         // TODO Better validation for departure date and time
         if (
             this.searchForm.valid &&
+            this.departDate &&
             this.departDate.year &&
+            this.departTime &&
             this.departTime.hour
         ) {
             console.info("searchForm.valid", this.searchForm.valid);

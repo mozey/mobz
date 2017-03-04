@@ -18,6 +18,8 @@ import {GeolocationService} from './geolocation.service';
 import {WimtService} from './wimt.service';
 import {WebsocketService} from './websocket.service';
 import { MapDirectionsDirective } from './map-directions.directive';
+import { DirectionsComponent } from './directions/directions.component';
+import { SocketComponent } from './socket/socket.component';
 
 @NgModule({
     declarations: [
@@ -25,7 +27,9 @@ import { MapDirectionsDirective } from './map-directions.directive';
         RouteComponent,
         TrackComponent,
         SearchComponent,
-        MapDirectionsDirective
+        MapDirectionsDirective,
+        DirectionsComponent,
+        SocketComponent
     ],
     imports: [
         BrowserModule,

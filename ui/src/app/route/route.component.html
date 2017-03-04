@@ -39,14 +39,17 @@
             <form class="form-inline">
                 <label class="sr-only" for="inlineFormInput">Name</label>
                 <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0"
-                       id="inlineFormInput" placeholder="Jane Doe">
+                       id="inlineFormInput" placeholder="Jane Doe"
+                       [(ngModel)]="friend.name" name="friend.name">
 
                 <label class="sr-only" for="inlineFormInputGroup">Pickup</label>
                 <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                     <div class="input-group-addon">@</div>
                     <input type="text" class="form-control"
                            id="inlineFormInputGroup"
-                           placeholder="Pickup">
+                           [(ngModel)]="pickup.display"
+                           placeholder="Pickup"
+                           name="pickup.display">
                 </div>
 
                 <button
@@ -60,11 +63,11 @@
                         &nbsp;&nbsp;
                     </span>
                     <span class="float-left"
-                          *ngFor="let itinerary of journey.itineraries">
+                          *ngFor="let itinerary of journey.itineraries; let idx = index">
                         <br>
                         <a href="javascript:"
                            (click)="showRouteDetails(itinerary, routeDetailsTemplate)">
-                            @&nbsp;</a>
+                            {{idx+1}}&nbsp;</a>
                     </span>
                 </div>
             </form>
@@ -72,10 +75,16 @@
     </div>
     <br>
 
-    <sebm-google-map [latitude]="lat" [longitude]="lng" [zoom]="zoom">
-        <sebm-google-map-polyline *ngFor="let coords of polyLines">
+    <sebm-google-map [latitude]="lat" [longitude]="lng" [zoom]="zoom"
+                     (mapClick)="setPickup($event)">
+        <sebm-google-map-marker [latitude]="pickup.coord.lat"
+                                [longitude]="pickup.coord.lng"
+                                [label]="friend.name">
+        </sebm-google-map-marker>
+        <sebm-google-map-polyline *ngFor="let polyLine of polyLines"
+                                  [strokeColor]="polyLine.strokeColor">
             <sebm-google-map-polyline-point
-                *ngFor="let coord of coords"
+                *ngFor="let coord of polyLine.coords"
                 [latitude]="coord[1]" [longitude]="coord[0]">
             </sebm-google-map-polyline-point>
         </sebm-google-map-polyline>

@@ -72,6 +72,9 @@ func (h *Hub) Run() {
 						delete(h.clients, client)
 					}
 				}
+			} else {
+				log.Print(err)
+				log.Print(string(message))
 			}
 		}
 	}

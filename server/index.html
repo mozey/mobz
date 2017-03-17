@@ -16,6 +16,7 @@
                 latitude: "{{.Latitude}}",
                 longitude: "{{.Longitude}}"
             };
+            coords["user_id"] = Number(coords["user_id"]);
             coords["latitude"] = Number(coords["latitude"]);
             coords["longitude"] = Number(coords["longitude"]);
 

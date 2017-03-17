@@ -15,7 +15,7 @@ Clone repos
     
 Install dependencies
 
-    cd mobz/ui
+    cd mobz/web
     
     npm install
     
@@ -42,9 +42,17 @@ Built with [Go](https://golang.org/)
 
 Run the server 
 
-    cd mobz
+    cd mobz/server
     
-    go run server/*.go
+    go run *.go
+    
+Run the server with live reload
+
+    go get github.com/codegangsta/gin
+    
+    cd mobz/server
+
+    gin
     
 Open [localhost:4100](localhost:4100) in multiple browsers,
 location is broadcast to all clients

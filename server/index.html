@@ -3,6 +3,7 @@
 <head>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
     <meta charset="utf-8">
+    <link rel="icon" href="assets/favicon.ico">
     <title>mobZ</title>
     <script>
         window.addEventListener("load", function (evt) {
@@ -65,7 +66,7 @@
 //                    maximumAge: 60000,
 //                    enableHighAccuracy: false
 //                });
-                setTimeout(function() {
+                setTimeout(function () {
                     console.info("position", {coords: coords});
                     coords.success = true;
                     var message = JSON.stringify(coords);

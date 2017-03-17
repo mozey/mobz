@@ -2,7 +2,6 @@ package main
 
 import (
 	"../types"
-	"flag"
 	"html/template"
 	"log"
 	"net/http"
@@ -11,14 +10,13 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"sync"
+	"os"
 )
-
-var addr = flag.String("addr", "localhost:4100", "http service address")
-//var addr = flag.String("addr", "0.0.0.0:4100", "http service address")
 
 var config = types.Config{}
 var coords = types.StubCoords{}
 var coordIndex = 0;
+
 var coordMutex = &sync.Mutex{}
 
 func getStartLocation() types.StubCoord {
@@ -45,9 +43,9 @@ func home(w http.ResponseWriter, r *http.Request) {
 	location := getStartLocation()
 	data := struct {
 		WebSocketUrl string
-		Latitude float64
-		Longitude float64
-	} {
+		Latitude     float64
+		Longitude    float64
+	}{
 		"ws://" + r.Host + "/location",
 		location.Latitude,
 		location.Longitude,
@@ -57,15 +55,24 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	flag.Parse()
 	log.SetFlags(0)
 
-	config.Load("server/config.json")
-	coords.Load("server/coords.json")
+	// Set default host and port if no env
+	var host = os.Getenv("HOST")
+	var port = os.Getenv("PORT")
+	if host == "" {
+		host = "localhost"
+	}
+	if port == "" {
+		port = "3100"
+	}
+	addr := fmt.Sprintf("%s:%s", host, port)
+
+	config.Load("config.json")
+	coords.Load("coords.json")
 
 	router := mux.NewRouter()
 
-	//http.HandleFunc("/echo", echo)
 	router.HandleFunc("/", home)
 
 	hub := NewHub()
@@ -78,12 +85,12 @@ func main() {
 	// see https://github.com/elazarl/go-bindata-assetfs
 	router.PathPrefix("/assets/").Handler(
 		http.StripPrefix(
-			"/assets/", http.FileServer(http.Dir("./ui/src/assets"))))
+			"/assets/", http.FileServer(http.Dir("../web/src/assets"))))
 
 	// Allow CORS
 	// http://stackoverflow.com/a/40987420/639133
 	originsOk := handlers.AllowedOrigins([]string{"*"})
-	log.Fatal(http.ListenAndServe(*addr, handlers.CORS(originsOk)(router)))
+	log.Fatal(http.ListenAndServe(addr, handlers.CORS(originsOk)(router)))
 
 	//log.Fatal(
 	//	http.ListenAndServeTLS(

@@ -25,9 +25,9 @@ function validDestination(c: FormControl) {
     styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit {
-    departDate: NgbDateStruct;
+    journeyDate: NgbDateStruct;
     date: {year: number, month: number};
-    departTime = {hour: 16, minute: 0};
+    journeyTime = {hour: 16, minute: 0};
 
     constructor(private fb: FormBuilder,
                 private geocode: GeocodeService,
@@ -70,20 +70,20 @@ export class SearchComponent implements OnInit {
         // TODO Better validation for departure date and time
         if (
             this.searchForm.valid &&
-            this.departDate &&
-            this.departDate.year &&
-            this.departTime &&
-            this.departTime.hour
+            this.journeyDate &&
+            this.journeyDate.year &&
+            this.journeyTime &&
+            this.journeyTime.hour
         ) {
             console.info("searchForm.valid", this.searchForm.valid);
             let form = this.searchForm.value;
             let destination = form.destination;
             let queryParams = {
-                "year": this.departDate.year,
-                "month": this.departDate.month,
-                "day": this.departDate.day,
-                "hour": this.departTime.hour,
-                "minute": this.departTime.minute,
+                "year": this.journeyDate.year,
+                "month": this.journeyDate.month,
+                "day": this.journeyDate.day,
+                "hour": this.journeyTime.hour,
+                "minute": this.journeyTime.minute,
                 "lat": destination["geometry"]["location"]["lat"],
                 "lng": destination["geometry"]["location"]["lng"]
             };

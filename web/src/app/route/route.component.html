@@ -55,7 +55,7 @@
                 <button
                     type="button" class="btn btn-primary"
                     (click)="track()">
-                    Join!
+                    Add Me!
                 </button>
 
                 <div>
@@ -79,7 +79,8 @@
                      (mapClick)="setPickup($event)">
         <sebm-google-map-marker [latitude]="pickup.coord.lat"
                                 [longitude]="pickup.coord.lng"
-                                [label]="friend.name">
+                                [label]="friend.name"
+                                [iconUrl]="'assets/cute_rabbit.gif'">
         </sebm-google-map-marker>
         <sebm-google-map-polyline *ngFor="let polyLine of polyLines"
                                   [strokeColor]="polyLine.strokeColor">

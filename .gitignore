@@ -4,3 +4,5 @@ _excluded
 server/config.json
 server/server.key
 server/server.crt
+server/gin-bin
+server/assets

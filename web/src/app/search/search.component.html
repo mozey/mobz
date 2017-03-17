@@ -16,13 +16,22 @@
 
     <div class="row">
         <div class="col-md-6">
-            <strong>Depart at</strong><br>
-            <ngb-datepicker #dp [(ngModel)]="departDate"
+            <select class="form-control"
+                    id="dateTimeSelect" [(ngModel)]="dateTimeSelect">
+              <option value="depart">Depart at</option>
+              <option value="arrive">Arrive at</option>
+            </select>
+        </div>
+    </div>
+    <br>
+
+    <div class="row">
+        <div class="col-md-6">
+            <ngb-datepicker #dp [(ngModel)]="journeyDate"
                             (navigate)="date = $event.next"></ngb-datepicker>
         </div>
         <div class="col-md-6">
-            <strong>&nbsp;</strong><br>
-            <ngb-timepicker [(ngModel)]="departTime"></ngb-timepicker>
+            <ngb-timepicker [(ngModel)]="journeyTime"></ngb-timepicker>
         </div>
     </div>
     <br>

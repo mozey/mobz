@@ -53,11 +53,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 	location := getStartLocation()
 	data := struct {
 		WebSocketUrl string
+		LinkID       int64
 		UserID       int64
 		Latitude     float64
 		Longitude    float64
 	}{
 		"ws://" + r.Host + "/location",
+		location.LinkID,
 		location.UserID,
 		location.Latitude,
 		location.Longitude,

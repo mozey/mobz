@@ -1,42 +1,49 @@
 {
     "start": [
         {
+            "link_id": 123,
             "user_id": 0,
             "latitude": -34.035552,
             "longitude": 18.356105,
             "description": "Hout Bay"
         },
         {
+            "link_id": 123,
             "user_id": 1,
             "latitude": -33.918512,
             "longitude": 18.384086,
             "description": "Sea Point"
         },
         {
+            "link_id": 123,
             "user_id": 2,
             "latitude": -33.906046,
             "longitude": 18.421808,
             "description": "Waterfront"
         },
         {
+            "link_id": 123,
             "user_id": 3,
             "latitude": -33.940056,
             "longitude": 18.488681,
             "description": "Mowbray"
         },
         {
+            "link_id": 123,
             "user_id": 4,
             "latitude": -33.936428,
             "longitude": 18.413494,
             "description": "Gardens"
         },
         {
+            "link_id": 123,
             "user_id": 5,
             "latitude": -33.951855,
             "longitude": 18.376865,
             "description": "Camps Bay"
         },
         {
+            "link_id": 123,
             "user_id": 6,
             "latitude": -33.837996,
             "longitude": 18.517802,

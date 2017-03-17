@@ -50,13 +50,8 @@ Run the server
     
     go run *.go
     
-Run the server with live reload
-
-    go get github.com/codegangsta/gin
-    
-    cd mobz/server
-
-    gin
+    # Run with live reload
+    make serve
     
 Open [localhost:4100](localhost:4100) in multiple browsers,
 location is broadcast to all clients

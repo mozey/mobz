@@ -194,8 +194,8 @@ type Config struct {
 		 } `json:"wimt"`
 }
 
-func (c *Config) Load(configPath string) {
-	file, err := os.Open(configPath)
+func (c *Config) Load(path string) {
+	file, err := os.Open(path)
 	if err == nil {
 		decoder := json.NewDecoder(file)
 		err = decoder.Decode(&c)
@@ -203,7 +203,7 @@ func (c *Config) Load(configPath string) {
 			log.Fatal(err)
 		}
 	} else {
-		log.Fatal(fmt.Sprintf("Config path '%s' does not exist", configPath))
+		log.Fatal(fmt.Sprintf("Config path '%s' does not exist", path))
 	}
 }
 
@@ -215,18 +215,19 @@ type WebSocketRequest struct {
 	} `json:"params"`
 }
 
-type StubCoord struct {
-	FriendID    int `json:"friend_id"`
+type UserCoord struct {
+	UserID      int64 `json:"user_id"`
 	Latitude    float64 `json:"latitude"`
 	Longitude   float64 `json:"longitude"`
 	Description string `json:"description"`
+	Success     bool `json:"success"`
 }
-type StubCoords struct {
-	Start []StubCoord `json:"start"`
+type UserCoords struct {
+	Start []UserCoord `json:"start"`
 }
 
-func (c *StubCoords) Load(stubPath string) {
-	file, err := os.Open(stubPath)
+func (c *UserCoords) Load(path string) {
+	file, err := os.Open(path)
 	if err == nil {
 		decoder := json.NewDecoder(file)
 		err = decoder.Decode(&c)
@@ -234,6 +235,6 @@ func (c *StubCoords) Load(stubPath string) {
 			log.Fatal(err)
 		}
 	} else {
-		log.Fatal(fmt.Sprintf("Coords stub '%s' does not exist", stubPath))
+		log.Fatal(fmt.Sprintf("Coords stub '%s' does not exist", path))
 	}
 }

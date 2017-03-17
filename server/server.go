@@ -2,26 +2,31 @@ package main
 
 import (
 	"../types"
-	"html/template"
-	"log"
-	"net/http"
-	"io/ioutil"
+	"flag"
 	"fmt"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"html/template"
+	"io/ioutil"
+	"log"
+	"net/http"
 	"sync"
-	"os"
 )
 
+var addr = flag.String(
+	"addr", "localhost:4100", "Default service address")
+
 var config = types.Config{}
-var coords = types.StubCoords{}
-var coordIndex = 0;
+
+// TODO Remove this, default coords on index is for testing only
+var coords = types.UserCoords{}
+var coordIndex = 0
 
 var coordMutex = &sync.Mutex{}
 
-func getStartLocation() types.StubCoord {
+func getStartLocation() types.UserCoord {
 	defer (func() {
-		coordIndex++ // Next coord
+		coordIndex++                                // Next coord
 		coordIndex = coordIndex % len(coords.Start) // Wrap around
 	})()
 	coordMutex.Lock()
@@ -43,10 +48,12 @@ func home(w http.ResponseWriter, r *http.Request) {
 	location := getStartLocation()
 	data := struct {
 		WebSocketUrl string
+		UserID       int64
 		Latitude     float64
 		Longitude    float64
 	}{
 		"ws://" + r.Host + "/location",
+		location.UserID,
 		location.Latitude,
 		location.Longitude,
 	}
@@ -55,18 +62,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	log.SetFlags(0)
-
-	// Set default host and port if no env
-	var host = os.Getenv("HOST")
-	var port = os.Getenv("PORT")
-	if host == "" {
-		host = "localhost"
-	}
-	if port == "" {
-		port = "3100"
-	}
-	addr := fmt.Sprintf("%s:%s", host, port)
+	log.SetFlags(log.Lshortfile)
 
 	config.Load("config.json")
 	coords.Load("coords.json")
@@ -77,9 +73,10 @@ func main() {
 
 	hub := NewHub()
 	go hub.Run()
-	router.HandleFunc("/location", func(w http.ResponseWriter, r *http.Request) {
-		ServeWs(hub, w, r)
-	})
+	router.HandleFunc(
+		"/location", func(w http.ResponseWriter, r *http.Request) {
+			ServeWs(hub, w, r)
+		})
 
 	// TODO Compile static resources into the bin,
 	// see https://github.com/elazarl/go-bindata-assetfs
@@ -90,7 +87,8 @@ func main() {
 	// Allow CORS
 	// http://stackoverflow.com/a/40987420/639133
 	originsOk := handlers.AllowedOrigins([]string{"*"})
-	log.Fatal(http.ListenAndServe(addr, handlers.CORS(originsOk)(router)))
+	log.Print(fmt.Sprintf("Listening on %s", *addr))
+	log.Fatal(http.ListenAndServe(*addr, handlers.CORS(originsOk)(router)))
 
 	//log.Fatal(
 	//	http.ListenAndServeTLS(

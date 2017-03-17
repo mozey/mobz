@@ -2,9 +2,6 @@
 
 Makes transport social
 
-
-# More info
-
 See [slides](https://docs.google.com/presentation/d/15UZS_MdcvEklibB5Yn_NOAJB_8mPAa-fHs8vFU87ljk/edit) 
 prepared for "Access Cape Town: Hack on Open platform for transport data" 
 

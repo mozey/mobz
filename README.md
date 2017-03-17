@@ -3,7 +3,9 @@
 Makes transport social
 
 See [slides](https://docs.google.com/presentation/d/15UZS_MdcvEklibB5Yn_NOAJB_8mPAa-fHs8vFU87ljk/edit) 
-prepared for "Access Cape Town: Hack on Open platform for transport data" 
+prepared for "Access Cape Town: Hack on Open platform for transport data".
+
+And [here is a video](https://www.youtube.com/watch?v=rtW-cYF-tqY) of the event
 
 
 # User interface
@@ -31,7 +33,10 @@ Open [localhost:4200](localhost:4200)
 
 # Server
 
-Built with [Go](https://golang.org/)
+Built with [golang](https://golang.org/) 
+
+Location service uses a modified version of 
+[gorilla websocket chat example](https://github.com/gorilla/websocket/tree/master/examples/chat) 
 
 [Generate key and cert](https://gist.github.com/denji/12b3a568f092ab951456)
 
@@ -58,5 +63,5 @@ location is broadcast to all clients
 
 # Simulation
 
-Use [SimPy](https://simpy.readthedocs.io/en/latest/) to simulate clients?
+TODO Use [SimPy](https://simpy.readthedocs.io/en/latest/) to simulate users?
 

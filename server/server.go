@@ -13,12 +13,17 @@ import (
 	"sync"
 )
 
+// TODO Allow users to create links,
+// anyone with a valid LinkID can join the mob
+
 var addr = flag.String(
 	"addr", "localhost:4100", "Default service address")
 
 var config = types.Config{}
 
-// TODO Remove this, default coords on index is for testing only
+// TODO Lookup start location using IP Address,
+// default coords on index is for testing only,
+// add a flag to toggle the behaviour
 var coords = types.UserCoords{}
 var coordIndex = 0
 

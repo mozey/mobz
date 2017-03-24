@@ -80,3 +80,43 @@ In newer browsers the location services is not available unless proto is https
 
 TODO Use [SimPy](https://simpy.readthedocs.io/en/latest/) to simulate users?
 
+
+# Proxy
+
+For testing from mobile device
+
+Use [charles](https://www.charlesproxy.com) as reverse proxy
+
+    Proxy > SSL Proxying Settings...
+    
+    Host    mobz
+    Port    4300
+    
+    Proxy > Port Forwarding...
+    
+    Start Port      4300
+    Remote Host     mobz
+    Remote Port     4100
+
+TODO Use [nginx reverse proxy](https://www.nginx.com/resources/glossary/reverse-proxy-server/)
+
+    brew install nginx # if not installed already
+
+Setup iOS to use the proxy
+
+    Wifi > HTTP PROXY > Manual
+    
+    Server          192.168.1.102 # Use your own local IP
+    Port            8888
+    Authentication  False
+
+Open [charles cert](http://www.charlesproxy.com/getssl) on iOS 
+and install Charles certificate
+
+Open [https://mobz:4300](https://mobz:4300)
+
+
+# Database
+
+Using [postgres docker](https://hub.docker.com/_/postgres/)
+

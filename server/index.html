@@ -50,8 +50,9 @@
             };
 
             var second = 1000;
+
             function getLocation(callback) {
-                navigator.geolocation.getCurrentPosition(function(position) {
+                navigator.geolocation.getCurrentPosition(function (position) {
                     console.info("position", position);
                     coords.success = true;
                     coords.latitude = position.coords.latitude;
@@ -59,7 +60,7 @@
                     console.info(JSON.stringify(coords, null, 2));
                     var message = JSON.stringify(coords);
                     callback(message);
-                }, function(error) {
+                }, function (error) {
                     print("GEOLOCATION ERR: " + error.code + " " + error.message);
                     coords.success = false;
                     var message = JSON.stringify(coords);
@@ -94,8 +95,9 @@
             };
 
             var updateLoop = false;
+
             function update() {
-                getLocation(function(message) {
+                getLocation(function (message) {
                     sendLocation(message);
                     if (updateLoop) {
                         setTimeout(update, second);
@@ -119,6 +121,11 @@
                 return false;
             };
 
+            document.getElementById("clear").onclick = function (evt) {
+                alert(JSON.stringify(coords));
+                return false;
+            };
+
         });
     </script>
 </head>
@@ -127,12 +134,23 @@
     <label for=mobz>mobz</label>
     <input id="mobz" type="text" style="width: 250px" value="">
 </div>
-<div><a id="open" href="javascript:">open socket</a></div>
-<div><a id="close" href="javascript:">close socket</a></div>
-<div><a id="send" href="javascript:">send location</a></div>
-<div><a id="update" href="javascript:">update location</a></div>
-<div><a id="stop" href="javascript:">stop updating</a></div>
-<div><a id="info" href="javascript:">info</a></div>
+<div>
+    <a id="info" href="javascript:">info</a>
+    &nbsp;&nbsp;&nbsp;
+    <a id="clear" href="javascript:">clear</a>
+</div>
+<div>
+    <a id="open" href="javascript:">open socket</a>
+    &nbsp;&nbsp;&nbsp;
+    <a id="close" href="javascript:">close socket</a>
+</div>
+<div>
+    <a id="send" href="javascript:">send location</a>
+    &nbsp;&nbsp;&nbsp;
+    <a id="update" href="javascript:">update location</a>
+    &nbsp;&nbsp;&nbsp;
+    <a id="stop" href="javascript:">stop updating</a>
+</div>
 <br>
 <div id="output"></div>
 </body>

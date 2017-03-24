@@ -8,16 +8,13 @@ import (
 	"../types"
 	"encoding/json"
 	"log"
-	"sync"
 )
 
-var LinkID int64 = 123
-
-// hub maintains the set of active clients and broadcasts messages to the
-// clients.
+// hub maintains the set of active clients
+// and broadcasts messages to the clients.
 type Hub struct {
 	// Registered clients.
-	clients map[int64]map[*Client]bool
+	clients map[*Client]bool
 
 	// Inbound messages from the clients.
 	broadcast chan []byte
@@ -30,7 +27,6 @@ type Hub struct {
 
 	// Coords of all clients connected to this hub
 	coords map[int64]types.UserCoord
-	mutex  *sync.Mutex
 }
 
 func NewHub() *Hub {
@@ -38,27 +34,21 @@ func NewHub() *Hub {
 		broadcast:  make(chan []byte),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
-		clients:    make(map[int64]map[*Client]bool),
+		clients:    make(map[*Client]bool),
 		coords:     make(map[int64]types.UserCoord),
-		mutex:      &sync.Mutex{},
 	}
 }
 
 func (h *Hub) Run() {
 	for {
 		select {
-		// TODO Limit number of clients allowed per links
 		case client := <-h.register:
-			if _, keyFound := h.clients[LinkID]; keyFound {
-				h.clients[LinkID][client] = true
-			} else {
-				h.clients[LinkID] = map[*Client]bool{
-					client: true,
-				}
-			}
+			// TODO Limit number of clients allowed per mobz?
+			h.clients[client] = true
+
 		case client := <-h.unregister:
-			if _, ok := h.clients[LinkID][client]; ok {
-				delete(h.clients[LinkID], client)
+			if _, ok := h.clients[client]; ok {
+				delete(h.clients, client)
 				close(client.send)
 			}
 
@@ -66,21 +56,21 @@ func (h *Hub) Run() {
 			m := types.UserCoord{}
 			if err := json.Unmarshal([]byte(message), &m); err == nil {
 				// Update coord map for this user
-				h.mutex.Lock()
+				// and prepare response
 				h.coords[m.UserID] = m
-				h.mutex.Unlock()
 				s, err := json.Marshal(h.coords)
+
 				if err != nil {
 					log.Fatal(err)
 				}
 
 				// Broadcast coord map
-				for client := range h.clients[LinkID] {
+				for client := range h.clients {
 					select {
 					case client.send <- []byte(s):
 					default:
 						close(client.send)
-						delete(h.clients[LinkID], client)
+						delete(h.clients, client)
 					}
 				}
 

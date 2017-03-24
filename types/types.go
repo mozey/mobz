@@ -216,7 +216,7 @@ type WebSocketRequest struct {
 }
 
 type UserCoord struct {
-	LinkID      int64 `json:"link_id"`
+	Mobz        string `json:"mobz"`
 	UserID      int64 `json:"user_id"`
 	Latitude    float64 `json:"latitude"`
 	Longitude   float64 `json:"longitude"`
@@ -238,4 +238,15 @@ func (c *UserCoords) Load(path string) {
 	} else {
 		log.Fatal(fmt.Sprintf("Coords stub '%s' does not exist", path))
 	}
+}
+
+// LocationReq is the request to the location websocket
+type LocationReq struct {
+	Mobz        string `json:"mobz"`
+	UserID      int64 `json:"user_id"`
+}
+
+// LocationResp is the response from the location websocket
+type LocationResp struct {
+
 }

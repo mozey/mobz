@@ -1,10 +1,9 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
     <meta charset="utf-8">
     <link rel="icon" href="assets/favicon.ico">
-    <title>mobZ</title>
+    <title>mobz</title>
     <script>
         window.addEventListener("load", function (evt) {
 
@@ -12,12 +11,12 @@
             var ws;
 
             var coords = {
-                link_id: "{{.LinkID}}",
-                user_id: "{{.UserID}}",
+                mobz: "{{.Mobz}}",
+                userId: "{{.UserID}}",
                 latitude: "{{.Latitude}}",
                 longitude: "{{.Longitude}}"
             };
-            coords["user_id"] = Number(coords["user_id"]);
+            coords["userId"] = Number(coords["userId"]);
             coords["latitude"] = Number(coords["latitude"]);
             coords["longitude"] = Number(coords["longitude"]);
 
@@ -31,7 +30,9 @@
                 if (ws) {
                     return false;
                 }
-                ws = new WebSocket("{{.WebSocketUrl}}");
+                var websocketUrl = "{{.WebSocketUrl}}";
+                ws = new WebSocket(websocketUrl);
+                print(websocketUrl);
                 ws.onopen = function (evt) {
                     print("OPEN");
                 };
@@ -48,34 +49,39 @@
                 return false;
             };
 
+            var second = 1000;
+            function getLocation(callback) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    console.info("position", position);
+                    coords.success = true;
+                    coords.latitude = position.coords.latitude;
+                    coords.longitude = position.coords.longitude;
+                    console.info(JSON.stringify(coords, null, 2));
+                    var message = JSON.stringify(coords);
+                    callback(message);
+                }, function(error) {
+                    print("GEOLOCATION ERR: " + error.code + " " + error.message);
+                    coords.success = false;
+                    var message = JSON.stringify(coords);
+                    callback(message);
+                }, {
+                    timeout: 5 * second,
+                    enableHighAccuracy: false
+//                    maximumAge: 60000,
+                });
+            }
+
+            function sendLocation(message) {
+                print("SEND: " + message);
+                ws.send(message);
+            }
+
             document.getElementById("send").onclick = function (evt) {
                 if (!ws) {
                     print("Socket error");
                     return false;
                 }
-                var second = 1000;
-//                navigator.geolocation.getCurrentPosition(function(position) {
-//                    console.info("position", position);
-//                    var coords = position.coords;
-//                    coords.success = true;
-//                    var message = JSON.stringify(coords);
-//                    print("SEND: " + message);
-//                    ws.send(message);
-//                }, function(error) {
-//                    console.info("error", error);
-//                    print("ERROR: " + error.code + " " + error.message);
-//                }, {
-//                    timeout: 5 * second, // seconds
-//                    maximumAge: 60000,
-//                    enableHighAccuracy: false
-//                });
-                setTimeout(function () {
-                    console.info("position", {coords: coords});
-                    coords.success = true;
-                    var message = JSON.stringify(coords);
-                    print("SEND: " + message);
-                    ws.send(message);
-                }, 2 * second);
+                getLocation(sendLocation);
                 return false;
             };
 
@@ -87,28 +93,49 @@
                 return false;
             };
 
+            var updateLoop = false;
+            function update() {
+                getLocation(function(message) {
+                    sendLocation(message);
+                    if (updateLoop) {
+                        setTimeout(update, second);
+                    }
+                });
+            }
+
+            document.getElementById("update").onclick = function (evt) {
+                updateLoop = true;
+                update();
+                return false;
+            };
+
+            document.getElementById("stop").onclick = function (evt) {
+                updateLoop = false;
+                return false;
+            };
+
+            document.getElementById("info").onclick = function (evt) {
+                alert(JSON.stringify(coords));
+                return false;
+            };
+
         });
     </script>
 </head>
 <body>
-<table>
-    <tr>
-        <td valign="top" width="50%">
-            <p>Click "Open" to create a connection to the server,
-                "Send" to send a message to the server and "Close" to close the
-                connection.
-                You can change the message and send multiple times.
-            </p>
-            <form>
-                <button id="open">Open</button>
-                <button id="close">Close</button>
-                <button id="send">Send</button>
-            </form>
-        </td>
-        <td valign="top" width="50%">
-            <div id="output"></div>
-        </td>
-    </tr>
-</table>
+<div>
+    <label for=mobz>mobz</label>
+    <input id="mobz" type="text" style="width: 250px" value="">
+</div>
+<div><a id="open" href="javascript:">open socket</a></div>
+<div><a id="close" href="javascript:">close socket</a></div>
+<div><a id="send" href="javascript:">send location</a></div>
+<div><a id="update" href="javascript:">update location</a></div>
+<div><a id="stop" href="javascript:">stop updating</a></div>
+<div><a id="info" href="javascript:">info</a></div>
+<br>
+<div id="output"></div>
 </body>
 </html>
+
+

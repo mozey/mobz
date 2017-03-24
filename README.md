@@ -47,6 +47,19 @@ Location service uses a modified version of
     openssl ecparam -genkey -name secp384r1 -out server.key
     
     openssl req -new -x509 -sha256 -key server.key -out server.crt -days 3650
+    # Common Name must be "mobz"
+    
+Setup hosts file
+    
+    sudo vi /etc/hosts
+    
+    127.0.0.1 mobz
+    
+Trust self signed cert on osx
+
+    Keychain Access > System
+    
+    File > Import Items... > server.crt
 
 Run the server 
 
@@ -56,9 +69,11 @@ Run the server
     
     # Run with live reload
     make serve
-    
-Open [localhost:4100](localhost:4100) in multiple browsers,
-location is broadcast to all clients
+
+Open [https://mobz:4100](https://mobz:4100),
+web browser should not complain about the self-signed cert
+
+In newer browsers the location services is not available unless proto is https 
 
 
 # Simulation

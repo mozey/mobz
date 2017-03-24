@@ -14,10 +14,11 @@ import (
 )
 
 // TODO Allow users to create links,
-// anyone with a valid LinkID can join the mob
+// anyone with a valid Mobz can join the mob
 
 var addr = flag.String(
-	"addr", "localhost:4100", "Default service address")
+	//"addr", "localhost:4100", "Default service address")
+	"addr", "0.0.0.0:4100", "Default service address")
 
 var config = types.Config{}
 
@@ -53,19 +54,19 @@ func home(w http.ResponseWriter, r *http.Request) {
 	location := getStartLocation()
 	data := struct {
 		WebSocketUrl string
-		LinkID       int64
+		Mobz         string
 		UserID       int64
 		Latitude     float64
 		Longitude    float64
 	}{
-		"ws://" + r.Host + "/location",
-		location.LinkID,
+		//"ws://" + r.Host + "/location",
+		"wss://" + r.Host + "/location",
+		location.Mobz,
 		location.UserID,
 		location.Latitude,
 		location.Longitude,
 	}
 	homeTemplate.Execute(w, data)
-	//homeTemplate.Execute(w, "wss://" + r.Host + "/location")
 }
 
 func main() {
@@ -95,9 +96,10 @@ func main() {
 	// http://stackoverflow.com/a/40987420/639133
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	log.Print(fmt.Sprintf("Listening on %s", *addr))
-	log.Fatal(http.ListenAndServe(*addr, handlers.CORS(originsOk)(router)))
+	//log.Fatal(http.ListenAndServe(*addr, handlers.CORS(originsOk)(router)))
 
-	//log.Fatal(
-	//	http.ListenAndServeTLS(
-	//		*addr, "server/server.crt", "server/server.key", nil))
+	log.Fatal(
+		http.ListenAndServeTLS(
+			*addr, "server.crt", "server.key",
+			handlers.CORS(originsOk)(router)))
 }

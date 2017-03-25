@@ -118,5 +118,17 @@ Open [https://mobz:4300](https://mobz:4300)
 
 # Database
 
-Using [postgres docker](https://hub.docker.com/_/postgres/)
+Install postgres and create db
+
+    brew install postgres
+    
+    # To have launchd start postgresql now and restart at login:
+    brew services start postgresql
+    # Or, if you don't want/need a background service you can just run:
+    pg_ctl -D /usr/local/var/postgres start
+    
+    createdb mobz
+    psql
+    
+To setup database run `db/*.sql` in date order
 

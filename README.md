@@ -73,7 +73,11 @@ Run the server
 Open [https://mobz:4100](https://mobz:4100),
 web browser should not complain about the self-signed cert
 
-In newer browsers the location services is not available unless proto is https 
+In newer browsers the location services is not available unless proto is https
+ 
+## Test
+
+Unit tests for [gorilla/mux](http://stackoverflow.com/a/34456848/639133)
 
 
 # Simulation
@@ -131,4 +135,51 @@ Install postgres and create db
     psql
     
 To setup database run `db/*.sql` in date order
+
+
+TODO http://mattyjwilliams.blogspot.co.za/2013/01/using-go-to-unmarshal-json-lists-with.html
+
+
+# Hosting
+
+## [nginx](https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-16-04)
+
+Install 
+
+    sudo apt-get update
+    sudo apt-get install nginx
+    
+Stat
+
+    systemctl status nginx
+    
+Config
+    
+    cat /etc/nginx/sites-enabled/default 
+    
+Reload 
+    
+    sudo systemctl reload nginx
+    
+[Virtual host](https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-virtual-hosts-on-ubuntu-16-04)
+
+
+## [postgres](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04)
+
+Install
+
+    sudo apt-get update
+    sudo apt-get install postgresql postgresql-contrib
+    
+Create user and database
+
+    sudo -u postgres createuser --interactive
+    # name = mobz
+    
+    sudo -u postgres createdb mobz
+     
+    sudo adduser mobz
+
+    sudo -u mobz psql 
+    \conninfo
 

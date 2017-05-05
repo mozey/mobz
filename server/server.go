@@ -79,6 +79,8 @@ func main() {
 
 	router.HandleFunc("/", home)
 
+	router.HandleFunc("/echo", home)
+
 	hub := NewHub()
 	go hub.Run()
 	router.HandleFunc(

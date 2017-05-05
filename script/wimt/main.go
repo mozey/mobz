@@ -1,7 +1,7 @@
 package main
 
 import (
-	"../types"
+	"../../models"
 	"fmt"
 	//"net/url"
 	"net/http"
@@ -11,10 +11,11 @@ import (
 	"net/url"
 	"bytes"
 	"time"
+	"io/ioutil"
 )
 
-var config = types.Config{}
-var token = types.Token{}
+var config = models.Config{}
+var token = models.Token{}
 
 func checkHttpResp(resp *http.Response, err error) {
 	if err != nil {
@@ -64,8 +65,14 @@ func setToken() {
 	checkHttpResp(resp, err)
 	defer resp.Body.Close()
 
-	dec := json.NewDecoder(resp.Body)
-	err = dec.Decode(&token)
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+    //bodyString := string(bodyBytes)
+	//fmt.Println(bodyString)
+
+	err = json.Unmarshal(bodyBytes, &token)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,11 +83,11 @@ func setToken() {
 	token.ExpiresAt = time.Now().In(loc).Add(
 		time.Duration(token.ExpiresIn) * time.Second)
 
-	b, _ := json.MarshalIndent(token, "", "    ")
-	fmt.Println(string(b))
+	//b, _ := json.MarshalIndent(token, "", "    ")
+	//fmt.Println(string(b))
 }
 
-func getJourney() types.Journey {
+func getJourney() models.Journey {
 	setToken()
 
 	client := http.Client{}
@@ -100,7 +107,7 @@ func getJourney() types.Journey {
 			]
 		]
 	},
-	"time": "2017-03-04T10:55:25.575Z",
+	"time": "2017-05-06T10:55:25.575Z",
 	"timeType": "DepartAfter",
 	"profile": "ClosestToTime",
 	"maxItineraries":5
@@ -120,9 +127,15 @@ func getJourney() types.Journey {
 	checkHttpResp(resp, err)
 	defer resp.Body.Close()
 
-	dec := json.NewDecoder(resp.Body)
-	var journey types.Journey
-	err = dec.Decode(&journey)
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+    bodyString := string(bodyBytes)
+	fmt.Println(bodyString)
+
+	var journey models.Journey
+	err = json.Unmarshal(bodyBytes, &journey)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -131,15 +144,20 @@ func getJourney() types.Journey {
 }
 
 func main() {
+	log.SetFlags(log.Ldate | log.Ltime | log.LUTC | log.Lshortfile)
+
 	config.Load("server/config.json")
-	journey := getJourney()
+
+	// Query journey endpoint
+	//journey := getJourney()
+	getJourney()
 
 	//journey := Journey{}
 	//journey.Load("ui/src/assets/journey2.json")
 
 	//b, _ := json.MarshalIndent(config, "", "    ")
-	b, _ := json.MarshalIndent(journey, "", "    ")
-	fmt.Println(string(b))
+	//b, _ := json.MarshalIndent(journey, "", "    ")
+	//fmt.Println(string(b))
 }
 
 

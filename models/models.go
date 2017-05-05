@@ -1,4 +1,4 @@
-package types
+package models
 
 import (
 	"time"
@@ -63,7 +63,6 @@ func (geometry *Geometry) UnmarshalJSON(bArr []byte) (err error) {
 	return
 }
 
-// TODO Custom unmarshal fns to reduce empty properties on Journey
 type Journey struct {
 	ID             string `json:"id"`
 	Href           string `json:"href"`

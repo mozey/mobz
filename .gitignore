@@ -4,7 +4,8 @@ _excluded
 .idea/
 
 server/config.json
-server/server.key
-server/server.crt
+server/mobz.key
+server/mobz.csr
+server/mobz.crt
 server/assets
 server/server

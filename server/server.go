@@ -102,6 +102,6 @@ func main() {
 
 	log.Fatal(
 		http.ListenAndServeTLS(
-			*addr, "server.crt", "server.key",
+			*addr, "mobz.crt", "mobz.key",
 			handlers.CORS(originsOk)(router)))
 }

@@ -28,7 +28,7 @@ Run dev server with live reload
     
     ng serve --host 0.0.0.0 --port 4200 --live-reload-port 49153
     
-Open [localhost:4200](localhost:4200)
+Open [mobz:4200](mobz:4200)
 
 
 # Server
@@ -38,28 +38,34 @@ Built with [golang](https://golang.org/)
 Location service uses a modified version of 
 [gorilla websocket chat example](https://github.com/gorilla/websocket/tree/master/examples/chat) 
 
-[Generate key and cert](https://gist.github.com/denji/12b3a568f092ab951456)
+[Simple Golang HTTPS/TLS Server](https://gist.github.com/denji/12b3a568f092ab951456#simple-golang-httpstls-server)
+
+Self signed cert instructions for OSX last updated 2017-06-16,
+the procedure for this seems to change a lot with OSX and or Chrome updates
 
     cd mobz/server
     
-    openssl genrsa -out server.key 2048
+    openssl genrsa -out mobz.key 2048
     
-    openssl ecparam -genkey -name secp384r1 -out server.key
+    # Common and alt names must be the same, use "mobz" 
+    openssl req -x509 -nodes -new -sha256 -days 3650 \
+    -key mobz.key \
+    -out mobz.crt \
+    -subj /CN=mobz \
+    -reqexts SAN -extensions SAN \
+    -config <(cat /System/Library/OpenSSL/openssl.cnf \
+        <(printf '[SAN]\nsubjectAltName=DNS:mobz'))
     
-    openssl req -new -x509 -sha256 -key server.key -out server.crt -days 3650
-    # Common Name must be "mobz"
+    sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain mobz.crt
+    
+    # Delete certiciface by common name
+    sudo security delete-certificate -c mobz
     
 Setup hosts file
     
     sudo vi /etc/hosts
     
     127.0.0.1 mobz
-    
-Trust self signed cert on osx
-
-    Keychain Access > System
-    
-    File > Import Items... > server.crt
 
 Run the server 
 
@@ -135,9 +141,6 @@ Install postgres and create db
     psql
     
 To setup database run `db/*.sql` in date order
-
-
-TODO http://mattyjwilliams.blogspot.co.za/2013/01/using-go-to-unmarshal-json-lists-with.html
 
 
 # Hosting

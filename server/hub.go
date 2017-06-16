@@ -5,7 +5,7 @@
 package main
 
 import (
-	"../types"
+	"../models"
 	"encoding/json"
 	"log"
 )
@@ -26,7 +26,7 @@ type Hub struct {
 	unregister chan *Client
 
 	// Coords of all clients connected to this hub
-	coords map[int64]types.UserCoord
+	coords map[int64]models.UserCoord
 }
 
 func NewHub() *Hub {
@@ -35,7 +35,7 @@ func NewHub() *Hub {
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
-		coords:     make(map[int64]types.UserCoord),
+		coords:     make(map[int64]models.UserCoord),
 	}
 }
 
@@ -53,7 +53,7 @@ func (h *Hub) Run() {
 			}
 
 		case message := <-h.broadcast:
-			m := types.UserCoord{}
+			m := models.UserCoord{}
 			if err := json.Unmarshal([]byte(message), &m); err == nil {
 				// Update coord map for this user
 				// and prepare response

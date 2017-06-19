@@ -128,18 +128,6 @@ Open [https://mobz:4300](https://mobz:4300)
 
 # Database
 
-Install postgres and create db
-
-    brew install postgres
-    
-    # To have launchd start postgresql now and restart at login:
-    brew services start postgresql
-    # Or, if you don't want/need a background service you can just run:
-    pg_ctl -D /usr/local/var/postgres start
-    
-    createdb mobz
-    psql
-    
 To setup database run `db/*.sql` in date order
 
 
@@ -166,23 +154,4 @@ Reload
     
 [Virtual host](https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-server-blocks-virtual-hosts-on-ubuntu-16-04)
 
-
-## [postgres](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04)
-
-Install
-
-    sudo apt-get update
-    sudo apt-get install postgresql postgresql-contrib
-    
-Create user and database
-
-    sudo -u postgres createuser --interactive
-    # name = mobz
-    
-    sudo -u postgres createdb mobz
-     
-    sudo adduser mobz
-
-    sudo -u mobz psql 
-    \conninfo
 

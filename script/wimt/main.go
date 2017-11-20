@@ -107,7 +107,7 @@ func getJourney() models.Journey {
 			]
 		]
 	},
-	"time": "2017-05-06T10:55:25.575Z",
+	"time": "2017-06-21T10:55:25.575Z",
 	"timeType": "DepartAfter",
 	"profile": "ClosestToTime",
 	"maxItineraries":5

@@ -1,4 +1,5 @@
 {
     "serverDir": "/path/to/mobz/server",
-    "maxHubUsers": 100
+    "maxHubUsers": 100,
+    "mapApiKey": ""
 }

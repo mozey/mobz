@@ -14,13 +14,14 @@ import (
 var config Config
 
 var addr = flag.String(
-	// Local connections only
-	//"addr", "localhost:4100", "Default service address")
 	// Listen on all interfaces
 	"addr", "0.0.0.0:4100", "Default service address")
 
+var router *mux.Router
+var hubs map[string]*Hub
+
 func home(w http.ResponseWriter, r *http.Request) {
-	// TODO index.html should be compiled into the bin,
+	// TODO Landing pages should be compiled into the bin,
 	// see https://github.com/jteeuwen/go-bindata
 	index := "index.html"
 	s, err := ioutil.ReadFile(index)
@@ -30,14 +31,28 @@ func home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		WebSocketUrl string
+		Host string
 	}{
-		// http
-		//"ws://" + r.Host + "/location",
-		// https
-		"wss://" + r.Host + "/location",
+		r.Host,
 	}
 	homeTemplate.Execute(w, data)
+}
+
+func hub(w http.ResponseWriter, r *http.Request) {
+	v := mux.Vars(r)
+	tag := v["tag"]
+	hub, found := hubs[tag]
+	if !found {
+		hub = NewHub()
+		hubs[tag] = hub
+		go hub.Run()
+		router.HandleFunc(
+			fmt.Sprintf("/update/%v", tag),
+			func(w http.ResponseWriter, r *http.Request) {
+				ServeWs(hub, w, r)
+			})
+	}
+	w.Write([]byte(fmt.Sprintf("%v clients connected", len(hub.clients))))
 }
 
 func main() {
@@ -45,18 +60,12 @@ func main() {
 
 	config.Load("config.json")
 
-	router := mux.NewRouter()
+	router = mux.NewRouter()
 
 	router.HandleFunc("/", home)
 
-	router.HandleFunc("/echo", home)
-
-	hub := NewHub()
-	go hub.Run()
-	router.HandleFunc(
-		"/location", func(w http.ResponseWriter, r *http.Request) {
-			ServeWs(hub, w, r)
-		})
+	router.HandleFunc("/hub/{tag}", hub)
+	hubs = make(map[string]*Hub)
 
 	// TODO Compile static resources into the bin,
 	// see https://github.com/elazarl/go-bindata-assetfs
@@ -68,8 +77,6 @@ func main() {
 	// http://stackoverflow.com/a/40987420/639133
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	log.Print(fmt.Sprintf("Listening on %s", *addr))
-	//log.Fatal(http.ListenAndServe(*addr, handlers.CORS(originsOk)(router)))
-
 	log.Fatal(
 		http.ListenAndServeTLS(
 			*addr, "mobz.crt", "mobz.key",

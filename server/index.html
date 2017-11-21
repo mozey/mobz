@@ -10,15 +10,15 @@
             var output = document.getElementById("output");
             var ws;
 
-            var coords = {
-                mobz: "{{.Mobz}}",
-                userId: "{{.UserID}}",
-                latitude: "{{.Latitude}}",
-                longitude: "{{.Longitude}}"
+            var user = {
+                tag: "",
+                username: "",
+                status: "",
+                meta: {
+                    lat: 0,
+                    lon: 0
+                }
             };
-            coords["userId"] = Number(coords["userId"]);
-            coords["latitude"] = Number(coords["latitude"]);
-            coords["longitude"] = Number(coords["longitude"]);
 
             var print = function (message) {
                 var d = document.createElement("div");
@@ -54,17 +54,20 @@
             function getLocation(callback) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     console.info("position", position);
-                    coords.success = true;
-                    coords.latitude = position.coords.latitude;
-                    coords.longitude = position.coords.longitude;
-                    console.info(JSON.stringify(coords, null, 2));
-                    var message = JSON.stringify(coords);
+                    user.tag = document.getElementById("tag").value;
+                    user.username = document.getElementById("username").value;
+                    user.success = true;
+                    user.meta.lat = position.coords.latitude;
+                    user.meta.lon = position.coords.longitude;
+                    console.info(JSON.stringify(user, null, 2));
+                    var message = JSON.stringify(user);
                     callback(message);
                 }, function (error) {
                     print("GEOLOCATION ERR: " + error.code + " " + error.message);
-                    coords.success = false;
-                    var message = JSON.stringify(coords);
-                    callback(message);
+                    // TODO Server support for error messages
+//                    user.success = false;
+//                    var message = JSON.stringify(user);
+//                    callback(message);
                 }, {
                     timeout: 5 * second,
                     enableHighAccuracy: false
@@ -117,12 +120,12 @@
             };
 
             document.getElementById("info").onclick = function (evt) {
-                alert(JSON.stringify(coords));
+                alert(JSON.stringify(user));
                 return false;
             };
 
             document.getElementById("clear").onclick = function (evt) {
-                alert(JSON.stringify(coords));
+                alert(JSON.stringify(user));
                 return false;
             };
 
@@ -131,8 +134,12 @@
 </head>
 <body>
 <div>
-    <label for=mobz>mobz</label>
-    <input id="mobz" type="text" style="width: 250px" value="">
+    <label for=tag>tag</label>
+    <input id="tag" type="text" style="width: 250px" value="">
+</div>
+<div>
+    <label for=username>username</label>
+    <input id="username" type="text" style="width: 250px" value="">
 </div>
 <div>
     <a id="info" href="javascript:">info</a>

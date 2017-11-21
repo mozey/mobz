@@ -1,7 +1,6 @@
 package main
 
 import (
-	"../models"
 	"flag"
 	"fmt"
 	"github.com/gorilla/handlers"
@@ -10,36 +9,15 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"sync"
 )
 
-// TODO Allow users to create links,
-// anyone with a valid Mobz can join the mob
+var config Config
 
 var addr = flag.String(
+	// Local connections only
 	//"addr", "localhost:4100", "Default service address")
+	// Listen on all interfaces
 	"addr", "0.0.0.0:4100", "Default service address")
-
-var config = models.Config{}
-
-// TODO Lookup start location using IP Address,
-// default coords on index is for testing only,
-// add a flag to toggle the behaviour
-var coords = models.UserCoords{}
-var coordIndex = 0
-
-var coordMutex = &sync.Mutex{}
-
-func getStartLocation() models.UserCoord {
-	defer (func() {
-		coordIndex++                                // Next coord
-		coordIndex = coordIndex % len(coords.Start) // Wrap around
-	})()
-	coordMutex.Lock()
-	coord := coords.Start[coordIndex]
-	coordMutex.Unlock()
-	return coord
-}
 
 func home(w http.ResponseWriter, r *http.Request) {
 	// TODO index.html should be compiled into the bin,
@@ -51,20 +29,13 @@ func home(w http.ResponseWriter, r *http.Request) {
 		panic(fmt.Sprintf("%s not found", index))
 	}
 
-	location := getStartLocation()
 	data := struct {
 		WebSocketUrl string
-		Mobz         string
-		UserID       int64
-		Latitude     float64
-		Longitude    float64
 	}{
+		// http
 		//"ws://" + r.Host + "/location",
+		// https
 		"wss://" + r.Host + "/location",
-		location.Mobz,
-		location.UserID,
-		location.Latitude,
-		location.Longitude,
 	}
 	homeTemplate.Execute(w, data)
 }
@@ -73,7 +44,6 @@ func main() {
 	log.SetFlags(log.Lshortfile)
 
 	config.Load("config.json")
-	coords.Load("coords.json")
 
 	router := mux.NewRouter()
 

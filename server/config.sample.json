@@ -1,2 +1,4 @@
 {
+    "serverDir": "/path/to/mobz/server",
+    "maxHubUsers": 100
 }

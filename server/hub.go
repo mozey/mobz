@@ -1,13 +1,14 @@
 // Inspired by
-// https://github.com/gorilla/websocket/tree/master/examples/chat
+// https://github.com/gorilla/websocket/tree/master/examples/chat/hub.go
 
 package main
 
 import (
-	"../models"
 	"encoding/json"
 	"log"
 )
+
+var data = Data{}
 
 // hub maintains the set of active clients
 // and broadcasts messages to the clients.
@@ -15,26 +16,23 @@ type Hub struct {
 	// Registered clients.
 	clients map[*Client]bool
 
-	// Inbound messages from the clients.
-	broadcast chan []byte
+	// Inbound message event from client,
+	// update data and broadcast to clients
+	broadcast chan *Client
 
 	// Register requests from the clients.
 	register chan *Client
 
 	// Unregister requests from clients.
 	unregister chan *Client
-
-	// Coords of all clients connected to this hub
-	coords map[int64]models.UserCoord
 }
 
 func NewHub() *Hub {
 	return &Hub{
-		broadcast:  make(chan []byte),
+		broadcast:  make(chan *Client),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
-		coords:     make(map[int64]models.UserCoord),
 	}
 }
 
@@ -42,8 +40,14 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case client := <-h.register:
-			// TODO Limit number of clients allowed per mobz?
-			h.clients[client] = true
+			// TODO Limit number of clients allowed per Tag?
+			if len(h.clients) < config.MaxHubUsers {
+				h.clients[client] = true
+			} else {
+				msg := "Too many connections"
+				log.Println(msg)
+				client.send <- []byte(msg)
+			}
 
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
@@ -51,32 +55,30 @@ func (h *Hub) Run() {
 				close(client.send)
 			}
 
-		case message := <-h.broadcast:
-			m := models.UserCoord{}
-			if err := json.Unmarshal([]byte(message), &m); err == nil {
-				// Update coord map for this user
-				// and prepare response
-				h.coords[m.UserID] = m
-				s, err := json.Marshal(h.coords)
-
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				// Broadcast coord map
+		case updateClient := <-h.broadcast:
+			if !data.Initialised {
+				data.Users = make(map[JsonString]User)
 				for client := range h.clients {
-					select {
-					case client.send <- []byte(s):
-					default:
-						close(client.send)
-						delete(h.clients, client)
+					if len(client.User.Username) > 0 {
+						data.Users[client.User.Username] = client.User
 					}
 				}
+				data.Initialised = true
+			}
+			data.Users[updateClient.User.Username] = updateClient.User
 
-			} else {
-				// message is not valid json
-				log.Print(err)
-				log.Print(string(message))
+			b, err := json.Marshal(data)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			for client := range h.clients {
+				select {
+				case client.send <- b:
+				default:
+					close(client.send)
+					delete(h.clients, client)
+				}
 			}
 		}
 	}

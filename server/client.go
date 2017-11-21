@@ -1,5 +1,5 @@
 // Inspired by
-// https://github.com/gorilla/websocket/tree/master/examples/chat
+// https://github.com/gorilla/websocket/tree/master/examples/chat/client.go
 
 package main
 
@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"time"
 
+	"encoding/json"
 	"github.com/gorilla/websocket"
 )
 
@@ -49,6 +50,9 @@ type Client struct {
 
 	// Buffered channel of outbound messages.
 	send chan []byte
+
+	// User data
+	User User
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -73,7 +77,23 @@ func (c *Client) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		c.hub.broadcast <- message
+
+		user := User{}
+		if err := json.Unmarshal([]byte(message), &user); err == nil {
+			if len(user.Tag) > 0 && len(user.Username) > 0 {
+				// Update user data for this client
+				c.User = user
+				// Broadcast inbound message event
+				c.hub.broadcast <- c
+
+			} else {
+				log.Println("Required field missing from inbound message")
+			}
+
+		} else {
+			// Message is invalid json
+			log.Println(err)
+		}
 	}
 }
 

@@ -23,7 +23,7 @@ clean:
 # run formatting tool and build
 build: dependencies clean
 #	go-bindata $(BINDATA_PATHS)
-	go fmt
+#	go fmt
 	go build
 
 # run unit tests with code coverage

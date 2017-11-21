@@ -1,0 +1,67 @@
+{
+    "users": {
+        "one": {
+            "tag": "ee0e3a6",
+            "username": "one",
+            "status": "Hout Bay",
+            "meta": {
+                "lat": "-34.035552",
+                "lon": "18.356105"
+            }
+        },
+        "two": {
+            "tag": "ee0e3a6",
+            "username": "two",
+            "status": "Sea Point",
+            "meta": {
+                "lat": "-33.918512",
+                "lon": "18.384086"
+            }
+        },
+        "three": {
+            "tag": "ee0e3a6",
+            "username": "three",
+            "status": "Waterfront",
+            "meta": {
+                "lat": "-33.906046",
+                "lon": "18.421808"
+            }
+        },
+        "four": {
+            "tag": "ee0e3a6",
+            "username": "four",
+            "status": "Mowbray",
+            "meta": {
+                "lat": "-33.940056",
+                "lon": "18.488681"
+            }
+        },
+        "five": {
+            "tag": "ee0e3a6",
+            "username": "five",
+            "status": "Gardens",
+            "meta": {
+                "lat": "-33.936428",
+                "lon": "18.413494"
+            }
+        },
+        "six": {
+            "tag": "ee0e3a6",
+            "username": "six",
+            "status": "Camps Bay",
+            "meta": {
+                "lat": "-33.951855",
+                "lon": "18.376865"
+            }
+        },
+        "seven": {
+            "tag": "ee0e3a6",
+            "username": "seven",
+            "status": "Table View",
+            "meta": {
+                "lat": "-33.837996",
+                "lon": "18.517802"
+            }
+        }
+    }
+}

@@ -4,6 +4,13 @@
     <meta charset="utf-8">
     <link rel="icon" href="assets/favicon.ico">
     <title>mobz</title>
+
+    <script type="text/javascript"
+            src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript"
+            src="//maps.googleapis.com/maps/api/js?key=AIzaSyA3nXq2gOTooJz8HU_XNOuoZ2SE8fyEbI0"
+            async="" defer="defer"></script>
+
     <script>
         window.addEventListener("load", function (evt) {
 
@@ -82,13 +89,11 @@
 
             function getLocation(callback) {
                 navigator.geolocation.getCurrentPosition(function (position) {
-                    console.info("position", position);
                     user.tag = document.getElementById("tag").value;
                     user.username = document.getElementById("username").value;
                     user.success = true;
                     user.meta.lat = position.coords.latitude;
                     user.meta.lon = position.coords.longitude;
-                    console.info(JSON.stringify(user, null, 2));
                     var message = JSON.stringify(user);
                     callback(message);
                 }, function (error) {
@@ -158,36 +163,116 @@
                 return false;
             };
 
+            var markers = [
+                [-33.92425418, 18.48876683, ""],
+
+                [-33.89383448, 18.45395803, ""],
+
+                [-33.93984298, 18.4732774, ""],
+
+                [-33.91098645, 18.43612605, ""],
+
+                [-33.94519347, 18.50202067, ""],
+
+                [-33.91435315, 18.46266591, ""],
+
+                [-33.92360462, 18.40194762, ""],
+
+                [-33.93571779, 18.48299146, ""],
+
+                [-33.88650045, 18.43943218, ""],
+
+                [-33.91034929, 18.48118319, ""]
+            ];
+            var map;
+            function initMap() {
+                map = new google.visualization.Map(document.getElementById('map'), {
+                    mapTypeId: "roadmap"
+                });
+                var data = google.visualization.arrayToDataTable(
+                    [['Lat', 'Long', 'Desc']].concat(markers));
+                map.draw(data, {
+                    showTooltip: true,
+                    showInfoWindow: true
+                });
+            }
+
+            document.getElementById("showMap").onclick = function (evt) {
+                google.charts.load("upcoming", {packages: ["map"]});
+                google.charts.setOnLoadCallback(initMap);
+            };
+
+            var counter = 0;
+            document.getElementById("updateMap").onclick = function (evt) {
+                for (var i = 0; i < markers.length; i++) {
+                    var marker = markers[i];
+                    marker[2] = counter;
+                }
+                var data = google.visualization.arrayToDataTable(
+                    [['Lat', 'Long', 'Desc']].concat(markers));
+                map.draw(data, {
+                    showTooltip: true,
+                    showInfoWindow: true
+                });
+                counter++;
+                return false;
+            };
         });
     </script>
+
+    <style>
+        #settings {
+            float: left;
+            width: 50%;
+            height: 300px;
+        }
+        #map {
+            float: left;
+            width: 50%;
+            height: 300px;
+        }
+    </style>
+
 </head>
 <body>
-<div>
-    <label for=tag>tag</label>
-    <input id="tag" type="text" style="width: 250px" value="">
+<div id="settings">
+    <div>
+        <label for=tag>tag</label>
+        <input id="tag" type="text" style="width: 250px" value="">
+    </div>
+    <div>
+        <label for=username>username</label>
+        <input id="username" type="text" style="width: 250px" value="">
+    </div>
+    <div>
+        <a id="info" href="javascript:">info</a>
+        &nbsp;&nbsp;&nbsp;
+        <a id="clear" href="javascript:">clear</a>
+    </div>
+    <div>
+        <a id="init" href="javascript:">init</a>
+        &nbsp;&nbsp;&nbsp;
+        <a id="connect" href="javascript:">connect</a>
+        &nbsp;&nbsp;&nbsp;
+        <a id="close" href="javascript:">close</a>
+    </div>
+    <div>
+        <a id="send" href="javascript:">send location</a>
+        &nbsp;&nbsp;&nbsp;
+        <a id="update" href="javascript:">update location</a>
+        &nbsp;&nbsp;&nbsp;
+        <a id="stop" href="javascript:">stop updating</a>
+    </div>
+    <div>
+        map
+        &nbsp;&nbsp;&nbsp;
+        <a id="showMap" href="javascript:">show</a>
+        &nbsp;&nbsp;&nbsp;
+        <a id="updateMap" href="javascript:">update</a>
+    </div>
 </div>
-<div>
-    <label for=username>username</label>
-    <input id="username" type="text" style="width: 250px" value="">
-</div>
-<div>
-    <a id="info" href="javascript:">info</a>
-    &nbsp;&nbsp;&nbsp;
-    <a id="clear" href="javascript:">clear</a>
-</div>
-<div>
-    <a id="init" href="javascript:">init</a>
-    &nbsp;&nbsp;&nbsp;
-    <a id="connect" href="javascript:">connect</a>
-    &nbsp;&nbsp;&nbsp;
-    <a id="close" href="javascript:">close</a>
-</div>
-<div>
-    <a id="send" href="javascript:">send location</a>
-    &nbsp;&nbsp;&nbsp;
-    <a id="update" href="javascript:">update location</a>
-    &nbsp;&nbsp;&nbsp;
-    <a id="stop" href="javascript:">stop updating</a>
+<div id="map">
+
 </div>
 <br>
 <div id="output"></div>

@@ -6,7 +6,8 @@
     <title>mobz</title>
 
     <script type="text/javascript"
-            src="https://www.gstatic.com/charts/loader.js"></script>
+            src="assets/chartsLoader.js"></script>
+            <!--src="https://www.gstatic.com/charts/loader.js"></script>-->
     <script type="text/javascript"
             src="//maps.googleapis.com/maps/api/js?key=AIzaSyA3nXq2gOTooJz8HU_XNOuoZ2SE8fyEbI0"
             async="" defer="defer"></script>
@@ -28,6 +29,7 @@
                     lon: 0
                 }
             };
+            var users;
 
             var print = function (message) {
                 var d = document.createElement("div");
@@ -74,6 +76,9 @@
                 };
                 ws.onmessage = function (evt) {
                     print("RESPONSE " + evt.data);
+                    var data = JSON.parse(evt.data);
+                    console.info("data", JSON.stringify(data, null, 2));
+                    users = data.users;
                 };
                 ws.onerror = function (evt) {
                     if (!evt.data) {
@@ -164,25 +169,8 @@
             };
 
             var markers = [
-                [-33.92425418, 18.48876683, ""],
-
-                [-33.89383448, 18.45395803, ""],
-
-                [-33.93984298, 18.4732774, ""],
-
-                [-33.91098645, 18.43612605, ""],
-
-                [-33.94519347, 18.50202067, ""],
-
-                [-33.91435315, 18.46266591, ""],
-
-                [-33.92360462, 18.40194762, ""],
-
-                [-33.93571779, 18.48299146, ""],
-
-                [-33.88650045, 18.43943218, ""],
-
-                [-33.91034929, 18.48118319, ""]
+                // Initial marker is required?
+                [-33.92425418, 18.48876683, ""]
             ];
             var map;
             function initMap() {
@@ -204,10 +192,18 @@
 
             var counter = 0;
             document.getElementById("updateMap").onclick = function (evt) {
-                for (var i = 0; i < markers.length; i++) {
-                    var marker = markers[i];
-                    marker[2] = counter;
+                markers = [[-33.92425418, 18.48876683, ""]];
+                console.info("users", JSON.stringify(users, null, 2));
+                for (var username in users) {
+                    var item = users[username];
+                    var marker = [
+                        Number(item["meta"]["lat"]),
+                        Number(item["meta"]["lon"]),
+                        item["username"] + " - " + item["status"]
+                    ];
+                    markers.push(marker);
                 }
+                console.info("markers", JSON.stringify(markers, null, 2));
                 var data = google.visualization.arrayToDataTable(
                     [['Lat', 'Long', 'Desc']].concat(markers));
                 map.draw(data, {
